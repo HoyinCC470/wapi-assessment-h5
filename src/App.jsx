@@ -232,12 +232,97 @@ const m2Questions = [
   },
 ];
 
-const dimensions = [
-  ["Language & Expression", "语言运用力", 4],
-  ["Logic & Structure", "逻辑思维力", 3],
-  ["Communication", "沟通能力", 4],
-  ["Audience Impact", "表达影响力", 2],
+const backgroundOptions = [
+  "Mainly school English",
+  "International School / Bilingual School",
+  "English Training Programs",
+  "Native / Near Native",
 ];
+
+const voiceProfiles = [
+  {
+    en: "The Insight Explorer",
+    cn: "洞察探索者",
+    superpowerEn: "Deep Curiosity",
+    superpowerCn: "深度好奇",
+    description:
+      "You love discovering fresh perspectives and turning questions into understanding.",
+    descriptionCn: "你很容易被新的认知点点亮，并乐于把问题追问得更深。",
+    strength: "你很擅长从复杂信息里找到值得表达的洞察。",
+    growth: "下一步，是让你的观点更快进入重点，并更容易被听众记住。",
+  },
+  {
+    en: "The Story Connector",
+    cn: "故事连接者",
+    superpowerEn: "Human Connection",
+    superpowerCn: "共情连接",
+    description:
+      "You notice people, emotions, and moments that make ideas feel real.",
+    descriptionCn: "你能敏锐感受到人、情绪与故事，让表达天然更有温度。",
+    strength: "你能够让别人愿意听下去，并自然产生共鸣。",
+    growth: "下一步，是让你的故事在线索和节奏上更有层次。",
+  },
+  {
+    en: "The Future Builder",
+    cn: "未来建设者",
+    superpowerEn: "Future Thinking",
+    superpowerCn: "未来思维",
+    description:
+      "You are excited by new ideas and love turning possibilities into action.",
+    descriptionCn: "你总能看到新的可能性，并乐于把想法变成现实。",
+    strength: "你能够把灵感和想象自然延展成值得分享的方向。",
+    growth: "下一步，是学习如何让听众更快理解你想带他们去的未来。",
+  },
+  {
+    en: "The Brave Advocate",
+    cn: "勇敢倡导者",
+    superpowerEn: "Purpose Voice",
+    superpowerCn: "立场表达",
+    description:
+      "You are drawn to meaningful issues and willing to speak up when something matters.",
+    descriptionCn: "你会被重要议题吸引，并愿意在真正重要的事情上发声。",
+    strength: "你有清晰的表达立场，也有推动讨论发生的勇气。",
+    growth: "下一步，是把你的观点组织成更完整、更能影响听众的表达。",
+  },
+  {
+    en: "The Action Driver",
+    cn: "行动推动者",
+    superpowerEn: "Execution Energy",
+    superpowerCn: "行动推进",
+    description:
+      "You naturally move from idea to execution and want change to actually happen.",
+    descriptionCn: "你会自然地把想法推向行动，并希望改变真的发生。",
+    strength: "你很擅长把表达和行动联系起来，让想法更有落地感。",
+    growth: "下一步，是让你的表达在感染力与说服力上再走一步。",
+  },
+];
+
+const dimensionFeedback = {
+  "Language & Expression": {
+    strength: "你能够把想法说得比较清楚，语言表达很自然。",
+    growth: "下一步，可以继续训练更精准的词语选择和更有记忆点的表达。",
+  },
+  "Logic & Structure": {
+    strength: "你在组织信息时已经有不错的逻辑感，观点推进比较稳。",
+    growth: "下一步，可以继续加强观点之间的衔接，让结构更有层次。",
+  },
+  "Communication": {
+    strength: "你能够比较自然地与听众建立连接，表达很有亲和力。",
+    growth: "下一步，可以继续练习在不同场景下调整语气和互动感。",
+  },
+  "Audience Impact": {
+    strength: "你的表达已经开始具备影响他人的潜力，能留下印象。",
+    growth: "下一步，可以更主动地设计开头、重点和结尾，增强感染力。",
+  },
+};
+
+const defaultFormData = {
+  name: "Jack",
+  age: "8",
+  speakingExperience: "One",
+  background: backgroundOptions[1],
+  testCode: "",
+};
 
 function PhoneShell({ children, tone = "white", wideDesktop = false }) {
   return (
@@ -255,39 +340,53 @@ function BackButton({ onClick, className = "" }) {
   );
 }
 
-function Register({ onNext }) {
+function Register({ formData, onChange, onNext }) {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onNext();
+  };
+
   return (
     <PhoneShell tone="blue">
       <section className="register-page">
         <img className="register-logo" src="/wapi-logo-transparent.png" alt="WAPI" />
         <h1>WAPI Assessment</h1>
-        <form className="register-card" onSubmit={(event) => { event.preventDefault(); onNext(); }}>
+        <form className="register-card" onSubmit={handleSubmit}>
           <div className="two-fields">
             <label className="floating-field">
               <span>Your Name</span>
-              <input defaultValue="Jack" />
+              <input
+                value={formData.name}
+                onChange={(event) => onChange("name", event.target.value)}
+              />
             </label>
             <label className="floating-field">
               <span>Your Age</span>
-              <input defaultValue="8" />
+              <input
+                value={formData.age}
+                onChange={(event) => onChange("age", event.target.value)}
+              />
             </label>
           </div>
 
           <label className="floating-field wide">
             <span>Your Speaking Experience</span>
-            <input defaultValue="One" />
+            <input
+              value={formData.speakingExperience}
+              onChange={(event) => onChange("speakingExperience", event.target.value)}
+            />
           </label>
 
           <fieldset className="radio-group">
             <legend>English Learning Background</legend>
-            {[
-              "Mainly school English",
-              "International School / Bilingual School",
-              "English Training Programs",
-              "Native / Near Native",
-            ].map((item, index) => (
+            {backgroundOptions.map((item) => (
               <label className="radio-row" key={item}>
-                <input type="radio" name="background" defaultChecked={index === 1} />
+                <input
+                  type="radio"
+                  name="background"
+                  checked={formData.background === item}
+                  onChange={() => onChange("background", item)}
+                />
                 <span>{item}</span>
               </label>
             ))}
@@ -295,7 +394,11 @@ function Register({ onNext }) {
 
           <label className="floating-field wide test-code-field">
             <span>Test Code</span>
-            <input placeholder="Enter test code" />
+            <input
+              placeholder="Enter test code"
+              value={formData.testCode}
+              onChange={(event) => onChange("testCode", event.target.value)}
+            />
           </label>
 
           <button className="black-cta" type="submit">Login</button>
@@ -347,12 +450,22 @@ function Progress({ current, total, tone }) {
   );
 }
 
+function ProgressCounter({ current, total }) {
+  return (
+    <div className="progress-counter" aria-label={`Question ${current} of ${total}`}>
+      <span>{current}</span>
+      <small>/ {total}</small>
+    </div>
+  );
+}
+
 function TestPage({ type, step, questions, selected, onAnswer, onPrev, onBack, isTransitioning }) {
   const isVoice = type === "voice";
   const currentQuestion = questions[step];
   const visibleOptions = isVoice
     ? currentQuestion.options
     : [...currentQuestion.options, "I don't know"];
+
   return (
     <PhoneShell wideDesktop>
       <section className="test-page">
@@ -361,7 +474,11 @@ function TestPage({ type, step, questions, selected, onAnswer, onPrev, onBack, i
             <header className="test-header">
               <span>{isVoice ? "Voice Identity" : "Expression Discovery"}</span>
             </header>
-            <Progress current={step + 1} total={questions.length} tone={isVoice ? "blue" : "purple"} />
+            {isVoice ? (
+              <Progress current={step + 1} total={questions.length} tone="blue" />
+            ) : (
+              <ProgressCounter current={step + 1} total={questions.length} />
+            )}
           </div>
 
           <h1>{currentQuestion.prompt}</h1>
@@ -395,13 +512,18 @@ function RatingStars({ value }) {
   return (
     <span className="rating-stars">
       {Array.from({ length: 5 }).map((_, index) => (
-        <Star key={index} size={16} fill={index < value ? "#f7df70" : "#f1eff4"} color={index < value ? "#f7df70" : "#f1eff4"} />
+        <Star
+          key={index}
+          size={16}
+          fill={index < value ? "#f7df70" : "#f1eff4"}
+          color={index < value ? "#f7df70" : "#f1eff4"}
+        />
       ))}
     </span>
   );
 }
 
-function Result({ onBack, onDownloadReport, onShareIdentity, statusMessage }) {
+function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentity, statusMessage }) {
   return (
     <PhoneShell wideDesktop>
       <section className="result-page">
@@ -416,17 +538,18 @@ function Result({ onBack, onDownloadReport, onShareIdentity, statusMessage }) {
               <div className="result-card identity-card">
                 <img src="/designer-assets/result-identity.png" alt="" />
                 <div>
-                  <p className="small-muted">The Future Builder</p>
-                  <h2>未来建设者</h2>
+                  <p className="small-muted">{learnerName}</p>
+                  <h2>{profile.cn}</h2>
+                  <p className="small-muted super-title">{profile.en}</p>
                   <p className="small-muted super-title">Your Superpower</p>
-                  <strong>Future Thinking</strong>
-                  <span>未来思维</span>
+                  <strong>{profile.superpowerEn}</strong>
+                  <span>{profile.superpowerCn}</span>
                 </div>
               </div>
 
               <p className="description-card">
-                You are excited by new ideas and love turning possibilities into action.<br />
-                你总能看到新的可能性，并乐于把想法变成现实。
+                {profile.description}<br />
+                {profile.descriptionCn}
               </p>
 
               <div className="result-card profile-card">
@@ -438,7 +561,7 @@ function Result({ onBack, onDownloadReport, onShareIdentity, statusMessage }) {
                   </div>
                 </div>
                 <div className="dimension-list">
-                  {dimensions.map(([name, cn, value]) => (
+                  {profile.dimensions.map(([name, cn, value]) => (
                     <div className="dimension-row" key={name}>
                       <span>{name}<small>{cn}</small></span>
                       <RatingStars value={value} />
@@ -447,11 +570,11 @@ function Result({ onBack, onDownloadReport, onShareIdentity, statusMessage }) {
                 </div>
                 <div className="result-note">
                   <h3>Your Strength</h3>
-                  <p>你能够清晰自然地表达自己的观点</p>
+                  <p>{profile.strength}</p>
                 </div>
                 <div className="result-note">
                   <h3>Your Next Growth Opportunity</h3>
-                  <p>你已经有值得表达的想法。下一步，是学习如何影响听众</p>
+                  <p>{profile.growth}</p>
                 </div>
               </div>
             </div>
@@ -468,8 +591,88 @@ function Result({ onBack, onDownloadReport, onShareIdentity, statusMessage }) {
   );
 }
 
+function getDominantIndex(answers, optionCount) {
+  const counts = Array(optionCount).fill(0);
+
+  answers.forEach((value) => {
+    if (Number.isInteger(value) && value >= 0 && value < optionCount) {
+      counts[value] += 1;
+    }
+  });
+
+  const peak = Math.max(...counts);
+  if (peak === 0) return 2;
+  return counts.findIndex((count) => count === peak);
+}
+
+function buildDynamicDimensions(m2Answers) {
+  const knownAnswers = m2Answers.filter((value) => Number.isInteger(value) && value >= 0 && value < 4);
+  const total = m2Answers.length || 1;
+  const confidence = knownAnswers.length / total;
+  const distribution = [0, 0, 0, 0];
+
+  knownAnswers.forEach((value) => {
+    distribution[value] += 1;
+  });
+
+  const normalized = distribution.map((count) => (
+    knownAnswers.length ? count / knownAnswers.length : 0
+  ));
+
+  const clampScore = (value) => Math.max(2, Math.min(5, value));
+
+  return [
+    [
+      "Language & Expression",
+      "语言运用力",
+      clampScore(2 + Math.round(confidence * 2 + normalized[0])),
+    ],
+    [
+      "Logic & Structure",
+      "逻辑思维力",
+      clampScore(2 + Math.round(confidence * 2 + normalized[1])),
+    ],
+    [
+      "Communication",
+      "沟通能力",
+      clampScore(2 + Math.round(confidence * 2 + normalized[2])),
+    ],
+    [
+      "Audience Impact",
+      "表达影响力",
+      clampScore(2 + Math.round(confidence + normalized[3] * 2)),
+    ],
+  ];
+}
+
+function buildResultProfile(m1Answers, m2Answers) {
+  const profileIndex = getDominantIndex(m1Answers, voiceProfiles.length);
+  const baseProfile = voiceProfiles[profileIndex];
+  const dynamicDimensions = buildDynamicDimensions(m2Answers);
+  const strongestDimension = [...dynamicDimensions].sort((a, b) => b[2] - a[2])[0];
+  const growthDimension = [...dynamicDimensions].sort((a, b) => a[2] - b[2])[0];
+  const knownAnswers = m2Answers.filter((value) => Number.isInteger(value) && value >= 0 && value < 4);
+  const confidence = knownAnswers.length / (m2Answers.length || 1);
+  const confidenceLine = confidence >= 0.75
+    ? "You answered with strong consistency and showed solid confidence across Module 2."
+    : "Your answers show clear potential, with room to build more confidence through practice.";
+  const confidenceLineCn = confidence >= 0.75
+    ? "你在 Module 2 中展现出比较稳定的判断和表达自信。"
+    : "你已经有不错的表达潜力，接下来更需要通过练习建立稳定自信。";
+
+  return {
+    ...baseProfile,
+    description: `${baseProfile.description} ${confidenceLine}`,
+    descriptionCn: `${baseProfile.descriptionCn}${confidenceLineCn}`,
+    dimensions: dynamicDimensions,
+    strength: dimensionFeedback[strongestDimension[0]].strength,
+    growth: dimensionFeedback[growthDimension[0]].growth,
+  };
+}
+
 export function App() {
   const [screen, setScreen] = useState("register");
+  const [formData, setFormData] = useState(defaultFormData);
   const [m1Step, setM1Step] = useState(0);
   const [m2Step, setM2Step] = useState(0);
   const [m1Answers, setM1Answers] = useState(() => Array(m1Questions.length).fill(null));
@@ -478,6 +681,9 @@ export function App() {
   const [statusMessage, setStatusMessage] = useState("");
   const advanceTimerRef = useRef(null);
   const statusTimerRef = useRef(null);
+
+  const resultProfile = buildResultProfile(m1Answers, m2Answers);
+  const learnerName = formData.name.trim() || "WAPI Learner";
 
   const clearAdvanceTimer = () => {
     if (advanceTimerRef.current) {
@@ -507,6 +713,22 @@ export function App() {
     clearStatusTimer();
   }, []);
 
+  const handleFormChange = (field, value) => {
+    setFormData((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const resetAssessment = () => {
+    clearAdvanceTimer();
+    setIsTransitioning(false);
+    setM1Step(0);
+    setM2Step(0);
+    setM1Answers(Array(m1Questions.length).fill(null));
+    setM2Answers(Array(m2Questions.length).fill(null));
+  };
+
   const goM1Next = () => {
     clearAdvanceTimer();
     setIsTransitioning(false);
@@ -520,8 +742,11 @@ export function App() {
   const goM2Next = () => {
     clearAdvanceTimer();
     setIsTransitioning(false);
-    if (m2Step >= m2Questions.length - 1) setScreen("result");
-    else setM2Step((value) => value + 1);
+    if (m2Step >= m2Questions.length - 1) {
+      setScreen("result");
+    } else {
+      setM2Step((value) => value + 1);
+    }
   };
 
   const answerM1 = (answerIndex) => {
@@ -555,14 +780,20 @@ export function App() {
   const buildReportText = () => [
     "WAPI Assessment Result",
     "",
-    "Voice Identity: The Future Builder / 未来建设者",
-    "Superpower: Future Thinking / 未来思维",
+    `Learner: ${learnerName}`,
+    `Age: ${formData.age || "-"}`,
+    `Speaking Experience: ${formData.speakingExperience || "-"}`,
+    `English Background: ${formData.background || "-"}`,
+    `Test Code: ${formData.testCode || "-"}`,
+    "",
+    `Voice Identity: ${resultProfile.en} / ${resultProfile.cn}`,
+    `Superpower: ${resultProfile.superpowerEn} / ${resultProfile.superpowerCn}`,
     "",
     "Expression Profile",
-    ...dimensions.map(([name, cn, value]) => `${name} (${cn}): ${value}/5`),
+    ...resultProfile.dimensions.map(([name, cn, value]) => `${name} (${cn}): ${value}/5`),
     "",
-    "Strength: 你能够清晰自然地表达自己的观点",
-    "Next Growth Opportunity: 你已经有值得表达的想法。下一步，是学习如何影响听众",
+    `Strength: ${resultProfile.strength}`,
+    `Next Growth Opportunity: ${resultProfile.growth}`,
   ].join("\n");
 
   const handleDownloadReport = () => {
@@ -580,9 +811,9 @@ export function App() {
 
   const handleShareIdentity = async () => {
     const text = [
-      "I’m The Future Builder on WAPI Assessment.",
-      "Superpower: Future Thinking / 未来思维",
-      "You are excited by new ideas and love turning possibilities into action.",
+      `${learnerName} got ${resultProfile.en} on WAPI Assessment.`,
+      `Superpower: ${resultProfile.superpowerEn} / ${resultProfile.superpowerCn}`,
+      resultProfile.description,
     ].join("\n");
 
     try {
@@ -609,8 +840,23 @@ export function App() {
     showStatus("Opened your mail app.");
   };
 
-  if (screen === "register") return <Register onNext={() => setScreen("m1Intro")} />;
-  if (screen === "m1Intro") return <Intro type="voice" onBack={() => setScreen("register")} onNext={() => setScreen("m1Test")} />;
+  if (screen === "register") {
+    return (
+      <Register
+        formData={formData}
+        onChange={handleFormChange}
+        onNext={() => {
+          resetAssessment();
+          setScreen("m1Intro");
+        }}
+      />
+    );
+  }
+
+  if (screen === "m1Intro") {
+    return <Intro type="voice" onBack={() => setScreen("register")} onNext={() => setScreen("m1Test")} />;
+  }
+
   if (screen === "m1Test") {
     return (
       <TestPage
@@ -625,7 +871,11 @@ export function App() {
       />
     );
   }
-  if (screen === "m2Intro") return <Intro type="expression" onBack={() => setScreen("m1Test")} onNext={() => setScreen("m2Test")} />;
+
+  if (screen === "m2Intro") {
+    return <Intro type="expression" onBack={() => setScreen("m1Test")} onNext={() => setScreen("m2Test")} />;
+  }
+
   if (screen === "m2Test") {
     return (
       <TestPage
@@ -640,8 +890,11 @@ export function App() {
       />
     );
   }
+
   return (
     <Result
+      profile={resultProfile}
+      learnerName={learnerName}
       onBack={() => setScreen("m2Test")}
       onDownloadReport={handleDownloadReport}
       onShareIdentity={handleShareIdentity}
