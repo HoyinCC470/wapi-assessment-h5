@@ -93,141 +93,146 @@ const m1Questions = [
 const m2Questions = [
   {
     prompt: "Choose the best word: “I am ___ to join the speech club.”",
-    options: ["happy", "table", "quickly", "blue"],
+    options: [
+      { text: "table", dimension: "logic", isBest: false },
+      { text: "happy", dimension: "communication", isBest: true },
+      { text: "quickly", dimension: "language", isBest: false },
+      { text: "blue", dimension: "impact", isBest: false },
+    ],
   },
   {
     prompt: "Which sentence should come next? “I wanted to learn public speaking. ___”",
     options: [
-      "So I joined a speech club.",
-      "The weather was cold.",
-      "My shoes are new.",
-      "Apples are sweet.",
+      { text: "The weather was cold.", dimension: "language", isBest: false },
+      { text: "My shoes are new.", dimension: "impact", isBest: false },
+      { text: "So I joined a speech club.", dimension: "logic", isBest: true },
+      { text: "Apples are sweet.", dimension: "communication", isBest: false },
     ],
   },
   {
     prompt: "You are speaking to younger students. What should you do?",
     options: [
-      "Use simple examples",
-      "Use only difficult words",
-      "Ignore them",
-      "Speak as fast as possible",
+      { text: "Use only difficult words", dimension: "language", isBest: false },
+      { text: "Use simple examples", dimension: "communication", isBest: true },
+      { text: "Ignore them", dimension: "impact", isBest: false },
+      { text: "Speak as fast as possible", dimension: "logic", isBest: false },
     ],
   },
   {
     prompt: "Which opening is more interesting?",
     options: [
-      "Have you ever felt afraid to speak?",
-      "Today I will talk.",
-      "My topic is a topic.",
-      "Hello.",
+      { text: "Today I will talk.", dimension: "logic", isBest: false },
+      { text: "My topic is a topic.", dimension: "language", isBest: false },
+      { text: "Have you ever felt afraid to speak?", dimension: "impact", isBest: true },
+      { text: "Hello.", dimension: "communication", isBest: false },
     ],
   },
   {
     prompt: "“The audience listened carefully.” What does audience mean?",
     options: [
-      "people watching or listening",
-      "one speaker",
-      "a desk",
-      "a book",
+      { text: "one speaker", dimension: "communication", isBest: false },
+      { text: "a desk", dimension: "impact", isBest: false },
+      { text: "a book", dimension: "logic", isBest: false },
+      { text: "people watching or listening", dimension: "language", isBest: true },
     ],
   },
   {
     prompt: "Which is the best example to support “Reading helps students learn new words”?",
     options: [
-      "Students often meet new vocabulary in books.",
-      "Reading is quiet.",
-      "Some books are heavy.",
-      "Libraries have chairs.",
+      { text: "Reading is quiet.", dimension: "impact", isBest: false },
+      { text: "Students often meet new vocabulary in books.", dimension: "logic", isBest: true },
+      { text: "Some books are heavy.", dimension: "language", isBest: false },
+      { text: "Libraries have chairs.", dimension: "communication", isBest: false },
     ],
   },
   {
     prompt: "A teammate is nervous before presenting. What should you say?",
     options: [
-      "Let's practice together.",
-      "You will fail.",
-      "I will leave.",
-      "It is not my problem.",
+      { text: "You will fail.", dimension: "impact", isBest: false },
+      { text: "I will leave.", dimension: "logic", isBest: false },
+      { text: "Let's practice together.", dimension: "communication", isBest: true },
+      { text: "It is not my problem.", dimension: "language", isBest: false },
     ],
   },
   {
     prompt: "Which reason is strongest? “Students should practice speaking because...”",
     options: [
-      "it helps them share ideas clearly.",
-      "microphones exist.",
-      "rooms have chairs.",
-      "it is sometimes loud.",
+      { text: "microphones exist.", dimension: "impact", isBest: false },
+      { text: "rooms have chairs.", dimension: "communication", isBest: false },
+      { text: "it is sometimes loud.", dimension: "language", isBest: false },
+      { text: "it helps them share ideas clearly.", dimension: "logic", isBest: true },
     ],
   },
   {
     prompt: "Choose the best version: “I think this idea is good because it help people.”",
     options: [
-      "because it helps people",
-      "because it helping people",
-      "because help people",
-      "because helped people now",
+      { text: "because it helping people", dimension: "impact", isBest: false },
+      { text: "because it helps people", dimension: "language", isBest: true },
+      { text: "because help people", dimension: "logic", isBest: false },
+      { text: "because helped people now", dimension: "communication", isBest: false },
     ],
   },
   {
     prompt: "Put the speech structure in order.",
     options: [
-      "Point → Example → Conclusion",
-      "Conclusion → Point → Example",
-      "Example → Conclusion → Point",
-      "Random idea → End → Start",
+      { text: "Conclusion → Point → Example", dimension: "communication", isBest: false },
+      { text: "Example → Conclusion → Point", dimension: "impact", isBest: false },
+      { text: "Point → Example → Conclusion", dimension: "logic", isBest: true },
+      { text: "Random idea → End → Start", dimension: "language", isBest: false },
     ],
   },
   {
     prompt: "Which sentence is most appropriate in a formal presentation?",
     options: [
-      "I would like to explain why this issue matters.",
-      "This thing is kinda cool, you know.",
-      "Whatever, listen up.",
-      "I guess this is fine.",
+      { text: "This thing is kinda cool, you know.", dimension: "communication", isBest: false },
+      { text: "Whatever, listen up.", dimension: "impact", isBest: false },
+      { text: "I would like to explain why this issue matters.", dimension: "language", isBest: true },
+      { text: "I guess this is fine.", dimension: "logic", isBest: false },
     ],
   },
   {
     prompt: "Which opening creates curiosity?",
     options: [
-      "What if one sentence could change how people see you?",
-      "I will begin now.",
-      "This is my speech.",
-      "I have slides.",
+      { text: "I will begin now.", dimension: "language", isBest: false },
+      { text: "What if one sentence could change how people see you?", dimension: "impact", isBest: true },
+      { text: "This is my speech.", dimension: "logic", isBest: false },
+      { text: "I have slides.", dimension: "communication", isBest: false },
     ],
   },
   {
     prompt: "Choose the most natural sentence.",
     options: [
-      "Although the topic was difficult, she explained it clearly.",
-      "Although difficult topic, she clear explained it.",
-      "She explained although the topic.",
-      "Difficult clearly she explained.",
+      { text: "Although difficult topic, she clear explained it.", dimension: "impact", isBest: false },
+      { text: "She explained although the topic.", dimension: "logic", isBest: false },
+      { text: "Difficult clearly she explained.", dimension: "communication", isBest: false },
+      { text: "Although the topic was difficult, she explained it clearly.", dimension: "language", isBest: true },
     ],
   },
   {
     prompt: "What is the function of this sentence: “For example, a student might interview a local leader.”",
     options: [
-      "Supporting example",
-      "Main claim",
-      "Closing call",
-      "Topic change",
+      { text: "Main claim", dimension: "impact", isBest: false },
+      { text: "Supporting example", dimension: "logic", isBest: true },
+      { text: "Closing call", dimension: "communication", isBest: false },
+      { text: "Topic change", dimension: "language", isBest: false },
     ],
   },
   {
     prompt: "Someone disagrees with your idea. What is the best response?",
     options: [
-      "I see your point. Here is why I think differently.",
-      "You are completely wrong.",
-      "I will not answer.",
-      "Let's stop talking forever.",
+      { text: "You are completely wrong.", dimension: "impact", isBest: false },
+      { text: "I will not answer.", dimension: "logic", isBest: false },
+      { text: "Let's stop talking forever.", dimension: "language", isBest: false },
+      { text: "I see your point. Here is why I think differently.", dimension: "communication", isBest: true },
     ],
   },
   {
     prompt: "Which call to action is specific and clear?",
     options: [
-      "This week, practice one 60-second speech with a friend.",
-      "Be better someday.",
-      "Think about things.",
-      "Maybe try something.",
+      { text: "Be better someday.", dimension: "communication", isBest: false },
+      { text: "Think about things.", dimension: "language", isBest: false },
+      { text: "This week, practice one 60-second speech with a friend.", dimension: "impact", isBest: true },
+      { text: "Maybe try something.", dimension: "logic", isBest: false },
     ],
   },
 ];
@@ -469,7 +474,7 @@ function TestPage({ type, step, questions, selected, onAnswer, onPrev, onBack, i
   const currentQuestion = questions[step];
   const visibleOptions = isVoice
     ? currentQuestion.options
-    : [...currentQuestion.options, "I don't know"];
+    : [...currentQuestion.options, { text: "I don't know", isUnknown: true }];
 
   return (
     <PhoneShell wideDesktop>
@@ -493,11 +498,11 @@ function TestPage({ type, step, questions, selected, onAnswer, onPrev, onBack, i
               <button
                 className={`answer-row ${selected === index ? "selected" : ""}`}
                 onClick={() => onAnswer(index)}
-                key={`${step}-${item}`}
+                key={`${step}-${item.text ?? item}`}
                 disabled={isTransitioning}
               >
                 <Circle size={18} />
-                <span>{item}</span>
+                <span>{item.text ?? item}</span>
               </button>
             ))}
           </div>
@@ -611,59 +616,66 @@ function getDominantIndex(answers, optionCount) {
 }
 
 function buildDynamicDimensions(m2Answers) {
-  const knownAnswers = m2Answers.filter((value) => Number.isInteger(value) && value >= 0 && value < 4);
-  const total = m2Answers.length || 1;
-  const confidence = knownAnswers.length / total;
-  const distribution = [0, 0, 0, 0];
+  const dimensionMeta = {
+    language: ["Language & Expression", "语言运用力"],
+    logic: ["Logic & Structure", "逻辑思维力"],
+    communication: ["Communication", "沟通能力"],
+    impact: ["Audience Impact", "表达影响力"],
+  };
+  const dimensionOrder = ["language", "logic", "communication", "impact"];
+  const counts = {
+    language: 0,
+    logic: 0,
+    communication: 0,
+    impact: 0,
+  };
+  const weighted = {
+    language: 0,
+    logic: 0,
+    communication: 0,
+    impact: 0,
+  };
+  let knownCount = 0;
+  let preferredCount = 0;
 
-  knownAnswers.forEach((value) => {
-    distribution[value] += 1;
+  m2Answers.forEach((answerIndex, questionIndex) => {
+    const option = m2Questions[questionIndex]?.options?.[answerIndex];
+    if (!option || option.isUnknown || !option.dimension) return;
+
+    knownCount += 1;
+    counts[option.dimension] += 1;
+    weighted[option.dimension] += option.isBest ? 1 : 0.45;
+    if (option.isBest) preferredCount += 1;
   });
 
-  const normalized = distribution.map((count) => (
-    knownAnswers.length ? count / knownAnswers.length : 0
-  ));
-
   const clampScore = (value) => Math.max(2, Math.min(5, value));
+  const confidence = knownCount ? preferredCount / knownCount : 0;
 
-  return [
-    [
-      "Language & Expression",
-      "语言运用力",
-      clampScore(2 + Math.round(confidence * 2 + normalized[0])),
-    ],
-    [
-      "Logic & Structure",
-      "逻辑思维力",
-      clampScore(2 + Math.round(confidence * 2 + normalized[1])),
-    ],
-    [
-      "Communication",
-      "沟通能力",
-      clampScore(2 + Math.round(confidence * 2 + normalized[2])),
-    ],
-    [
-      "Audience Impact",
-      "表达影响力",
-      clampScore(2 + Math.round(confidence + normalized[3] * 2)),
-    ],
-  ];
+  const dimensions = dimensionOrder.map((key) => {
+    const exposure = knownCount ? counts[key] / knownCount : 0;
+    const quality = counts[key] ? weighted[key] / counts[key] : 0;
+    return [
+      dimensionMeta[key][0],
+      dimensionMeta[key][1],
+      clampScore(2 + Math.round(quality * 2 + exposure * 2)),
+    ];
+  });
+
+  return { dimensions, confidence };
 }
 
 function buildResultProfile(m1Answers, m2Answers) {
   const profileIndex = getDominantIndex(m1Answers, voiceProfiles.length);
   const baseProfile = voiceProfiles[profileIndex];
-  const dynamicDimensions = buildDynamicDimensions(m2Answers);
+  const { dimensions: dynamicDimensions, confidence } = buildDynamicDimensions(m2Answers);
   const strongestDimension = [...dynamicDimensions].sort((a, b) => b[2] - a[2])[0];
   const growthDimension = [...dynamicDimensions].sort((a, b) => a[2] - b[2])[0];
-  const knownAnswers = m2Answers.filter((value) => Number.isInteger(value) && value >= 0 && value < 4);
-  const confidence = knownAnswers.length / (m2Answers.length || 1);
   const confidenceLine = confidence >= 0.75
-    ? "You answered with strong consistency and showed solid confidence across Module 2."
-    : "Your answers show clear potential, with room to build more confidence through practice.";
+    ? "You answered with strong consistency and showed solid confidence across the expression test."
+    : "Your answers show clear potential, with room to build more confidence through the expression test.";
   const confidenceLineCn = confidence >= 0.75
-    ? "你在 Module 2 中展现出比较稳定的判断和表达自信。"
-    : "你已经有不错的表达潜力，接下来更需要通过练习建立稳定自信。";
+    ? "你在表达能力测试中展现出比较稳定的判断和表达自信。"
+    : "你已经有不错的表达潜力，接下来更需要通过表达能力测试和练习建立稳定自信。";
 
   return {
     ...baseProfile,
