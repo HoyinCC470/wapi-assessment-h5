@@ -241,10 +241,11 @@ const backgroundOptions = [
 
 const voiceProfiles = [
   {
-    en: "The Insight Explorer",
-    cn: "洞察探索者",
+    en: "The Insight Builder",
+    cn: "洞察建设者",
     superpowerEn: "Deep Curiosity",
     superpowerCn: "深度好奇",
+    image: "/personas/insight-builder.png",
     description:
       "You love discovering fresh perspectives and turning questions into understanding.",
     descriptionCn: "你很容易被新的认知点点亮，并乐于把问题追问得更深。",
@@ -252,10 +253,11 @@ const voiceProfiles = [
     growth: "下一步，是让你的观点更快进入重点，并更容易被听众记住。",
   },
   {
-    en: "The Story Connector",
-    cn: "故事连接者",
+    en: "The Storyteller",
+    cn: "故事讲述者",
     superpowerEn: "Human Connection",
     superpowerCn: "共情连接",
+    image: "/personas/storyteller.png",
     description:
       "You notice people, emotions, and moments that make ideas feel real.",
     descriptionCn: "你能敏锐感受到人、情绪与故事，让表达天然更有温度。",
@@ -267,6 +269,7 @@ const voiceProfiles = [
     cn: "未来建设者",
     superpowerEn: "Future Thinking",
     superpowerCn: "未来思维",
+    image: "/personas/future-builder.png",
     description:
       "You are excited by new ideas and love turning possibilities into action.",
     descriptionCn: "你总能看到新的可能性，并乐于把想法变成现实。",
@@ -274,10 +277,11 @@ const voiceProfiles = [
     growth: "下一步，是学习如何让听众更快理解你想带他们去的未来。",
   },
   {
-    en: "The Brave Advocate",
-    cn: "勇敢倡导者",
+    en: "The Advocate",
+    cn: "倡导者",
     superpowerEn: "Purpose Voice",
     superpowerCn: "立场表达",
+    image: "/personas/advocate.png",
     description:
       "You are drawn to meaningful issues and willing to speak up when something matters.",
     descriptionCn: "你会被重要议题吸引，并愿意在真正重要的事情上发声。",
@@ -285,10 +289,11 @@ const voiceProfiles = [
     growth: "下一步，是把你的观点组织成更完整、更能影响听众的表达。",
   },
   {
-    en: "The Action Driver",
-    cn: "行动推动者",
+    en: "The Catalyst",
+    cn: "行动催化者",
     superpowerEn: "Execution Energy",
     superpowerCn: "行动推进",
+    image: "/personas/catalyst.png",
     description:
       "You naturally move from idea to execution and want change to actually happen.",
     descriptionCn: "你会自然地把想法推向行动，并希望改变真的发生。",
@@ -536,7 +541,7 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
           <div className="result-scroll">
             <div className="result-stack">
               <div className="result-card identity-card">
-                <img src="/designer-assets/result-identity.png" alt="" />
+                <img src={profile.image} alt={profile.en} />
                 <div>
                   <p className="small-muted">{learnerName}</p>
                   <h2>{profile.cn}</h2>
