@@ -1,5 +1,11 @@
 # WAPI H5 UI Spec
 
+## Baseline Version
+
+- Current stable baseline: `0.1.0`
+- This version is the approved handoff point for ongoing PM, UI, and development collaboration.
+- New requests should build on this baseline unless a later version is explicitly defined.
+
 ## Scope
 
 This document defines the UI baseline for the WAPI H5 prototype.

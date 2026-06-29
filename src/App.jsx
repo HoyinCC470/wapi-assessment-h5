@@ -334,6 +334,27 @@ const defaultFormData = {
   testCode: "",
 };
 
+const AUTO_ADVANCE_DELAY_MS = 320;
+
+function useStaggerReveal(revealKey) {
+  const [isShown, setIsShown] = useState(false);
+
+  useEffect(() => {
+    let showFrame = 0;
+    const hideFrame = requestAnimationFrame(() => {
+      setIsShown(false);
+      showFrame = requestAnimationFrame(() => setIsShown(true));
+    });
+
+    return () => {
+      cancelAnimationFrame(hideFrame);
+      cancelAnimationFrame(showFrame);
+    };
+  }, [revealKey]);
+
+  return `t-stagger ${isShown ? "is-shown" : ""}`.trim();
+}
+
 function PhoneShell({ children, tone = "white", wideDesktop = false }) {
   return (
     <main className={`phone-shell ${tone} ${wideDesktop ? "wide-desktop" : ""}`}>
@@ -351,6 +372,8 @@ function BackButton({ onClick, className = "" }) {
 }
 
 function Register({ formData, onChange, onNext }) {
+  const revealClassName = useStaggerReveal("register");
+
   const handleSubmit = (event) => {
     event.preventDefault();
     onNext();
@@ -358,10 +381,10 @@ function Register({ formData, onChange, onNext }) {
 
   return (
     <PhoneShell tone="blue">
-      <section className="register-page">
-        <img className="register-logo" src="/wapi-logo-transparent.png" alt="WAPI" />
-        <h1>WAPI Assessment</h1>
-        <form className="register-card" onSubmit={handleSubmit}>
+      <section className={`register-page screen-reveal ${revealClassName}`}>
+        <img className="register-logo t-stagger-line t-stagger-line--1" src="/wapi-logo-transparent.png" alt="WAPI" />
+        <h1 className="t-stagger-line t-stagger-line--2">WAPI Assessment</h1>
+        <form className="register-card t-stagger-line t-stagger-line--3" onSubmit={handleSubmit}>
           <div className="two-fields">
             <label className="floating-field">
               <span>Your Name</span>
@@ -390,7 +413,7 @@ function Register({ formData, onChange, onNext }) {
           <fieldset className="radio-group">
             <legend>English Learning Background</legend>
             {backgroundOptions.map((item) => (
-              <label className="radio-row" key={item}>
+              <label className={`radio-row ${formData.background === item ? "selected" : ""}`} key={item}>
                 <input
                   type="radio"
                   name="background"
@@ -420,23 +443,25 @@ function Register({ formData, onChange, onNext }) {
 
 function Intro({ type, onNext, onBack }) {
   const isVoice = type === "voice";
+  const revealClassName = useStaggerReveal(type);
+
   return (
     <PhoneShell wideDesktop>
-      <section className="intro-page">
-        <div className="intro-content">
+      <section className="intro-page screen-reveal">
+        <div className={`intro-content ${revealClassName}`}>
           <div className={`stage-progress ${isVoice ? "voice-stage" : "expression-stage"}`}>
             <span className="stage-segment stage-segment-one" />
             <span className="stage-separator" />
             <span className="stage-segment stage-segment-two" />
           </div>
           <img
-            className={isVoice ? "intro-figure voice-figure" : "intro-figure expression-figure"}
+            className={`t-stagger-line t-stagger-line--1 ${isVoice ? "intro-figure voice-figure" : "intro-figure expression-figure"}`}
             src={isVoice ? "/designer-assets/voice-intro-full.png" : "/designer-assets/expression-intro-full.png"}
             alt=""
           />
-          <h1>{isVoice ? "Voice Identity" : "Expression Discovery"}</h1>
-          <p>{isVoice ? "发现你的声音" : "表达力探索"}</p>
-          <div className="intro-actions">
+          <h1 className="t-stagger-line t-stagger-line--2">{isVoice ? "Voice Identity" : "Expression Discovery"}</h1>
+          <p className="t-stagger-line t-stagger-line--3">{isVoice ? "发现你的声音" : "表达力探索"}</p>
+          <div className="intro-actions t-stagger-line t-stagger-line--4">
             <button className="light-button nav-icon-button" onClick={onBack} aria-label="Back">
               <ArrowLeft size={20} />
             </button>
@@ -454,16 +479,32 @@ function Progress({ current, total, tone }) {
   return (
     <div className="progress-bars" aria-label={`Question ${current} of ${total}`}>
       {Array.from({ length: total }).map((_, index) => (
-        <span className={index < current ? tone : ""} key={index} />
+        <span className={index < current ? tone : ""} style={{ "--bar-index": index }} key={index} />
       ))}
     </div>
+  );
+}
+
+function AnimatedNumber({ value }) {
+  return (
+    <span className="t-digit-group is-animating" key={value}>
+      {String(value).split("").map((char, index, chars) => {
+        const stagger =
+          index === chars.length - 2 ? 1 : index === chars.length - 1 ? 2 : undefined;
+        return (
+          <span className="t-digit" data-stagger={stagger} key={`${char}-${index}`}>
+            {char}
+          </span>
+        );
+      })}
+    </span>
   );
 }
 
 function ProgressCounter({ current, total }) {
   return (
     <div className="progress-counter" aria-label={`Question ${current} of ${total}`}>
-      <span>{current}</span>
+      <span><AnimatedNumber value={current} /></span>
       <small>/ {total}</small>
     </div>
   );
@@ -472,13 +513,14 @@ function ProgressCounter({ current, total }) {
 function TestPage({ type, step, questions, selected, onAnswer, onPrev, onBack, isTransitioning }) {
   const isVoice = type === "voice";
   const currentQuestion = questions[step];
+  const revealClassName = useStaggerReveal(`${type}-${step}`);
   const visibleOptions = isVoice
     ? currentQuestion.options
     : [...currentQuestion.options, { text: "I don't know", isUnknown: true }];
 
   return (
     <PhoneShell wideDesktop>
-      <section className="test-page">
+      <section className="test-page screen-reveal">
         <div className="test-content">
           <div className="test-top">
             <header className="test-header">
@@ -491,20 +533,25 @@ function TestPage({ type, step, questions, selected, onAnswer, onPrev, onBack, i
             )}
           </div>
 
-          <h1>{currentQuestion.prompt}</h1>
+          <div className={`question-motion ${revealClassName}`} key={`${type}-${step}`}>
+            <h1 className="t-stagger-line t-stagger-line--1">{currentQuestion.prompt}</h1>
 
-          <div className="answer-list">
-            {visibleOptions.map((item, index) => (
-              <button
-                className={`answer-row ${selected === index ? "selected" : ""}`}
-                onClick={() => onAnswer(index)}
-                key={`${step}-${item.text ?? item}`}
-                disabled={isTransitioning}
-              >
-                <Circle size={18} />
-                <span>{item.text ?? item}</span>
-              </button>
-            ))}
+            <div className="answer-list">
+              {visibleOptions.map((item, index) => (
+                <button
+                  className={`answer-row t-stagger-line t-stagger-line--${index + 2} ${selected === index ? "selected" : ""}`}
+                  onClick={() => onAnswer(index)}
+                  key={`${step}-${item.text ?? item}`}
+                  disabled={isTransitioning}
+                >
+                  <span className="answer-icon t-icon-swap" data-state={selected === index ? "b" : "a"} aria-hidden="true">
+                    <span className="t-icon" data-icon="a"><Circle size={18} /></span>
+                    <span className="t-icon" data-icon="b"><Circle size={18} fill="currentColor" /></span>
+                  </span>
+                  <span>{item.text ?? item}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="test-actions">
@@ -534,10 +581,12 @@ function RatingStars({ value }) {
 }
 
 function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentity, statusMessage }) {
+  const revealClassName = useStaggerReveal(profile.en);
+
   return (
     <PhoneShell wideDesktop>
-      <section className="result-page">
-        <div className="result-content">
+      <section className="result-page screen-reveal">
+        <div className={`result-content ${revealClassName}`}>
           <div className="result-top">
             <BackButton onClick={onBack} className="result-back-button" />
             <h1 className="result-title">Result: Voice Identity</h1>
@@ -545,7 +594,7 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
 
           <div className="result-scroll">
             <div className="result-stack">
-              <div className="result-card identity-card">
+              <div className="result-card identity-card t-stagger-line t-stagger-line--1">
                 <img src={profile.image} alt={profile.en} />
                 <div>
                   <p className="small-muted">{learnerName}</p>
@@ -557,12 +606,12 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
                 </div>
               </div>
 
-              <p className="description-card">
+              <p className="description-card t-stagger-line t-stagger-line--2">
                 {profile.description}<br />
                 {profile.descriptionCn}
               </p>
 
-              <div className="result-card profile-card">
+              <div className="result-card profile-card t-stagger-line t-stagger-line--3">
                 <div className="profile-heading">
                   <span className="profile-icon"><SlidersHorizontal size={17} /></span>
                   <div>
@@ -571,8 +620,8 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
                   </div>
                 </div>
                 <div className="dimension-list">
-                  {profile.dimensions.map(([name, cn, value]) => (
-                    <div className="dimension-row" key={name}>
+                  {profile.dimensions.map(([name, cn, value], index) => (
+                    <div className="dimension-row" style={{ "--dimension-index": index }} key={name}>
                       <span>{name}<small>{cn}</small></span>
                       <RatingStars value={value} />
                     </div>
@@ -590,11 +639,11 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
             </div>
           </div>
 
-          <div className="result-actions">
+          <div className="result-actions t-stagger-line t-stagger-line--4">
             <button className="outline-action" onClick={onDownloadReport}>Send My Report</button>
             <button className="black-action" onClick={onShareIdentity}>Share My Identity</button>
           </div>
-          {statusMessage ? <p className="result-status">{statusMessage}</p> : null}
+          {statusMessage ? <p className="result-status" key={statusMessage}>{statusMessage}</p> : null}
         </div>
       </section>
     </PhoneShell>
@@ -777,7 +826,7 @@ export function App() {
     clearAdvanceTimer();
     advanceTimerRef.current = setTimeout(() => {
       goM1Next();
-    }, 180);
+    }, AUTO_ADVANCE_DELAY_MS);
   };
 
   const answerM2 = (answerIndex) => {
@@ -791,7 +840,7 @@ export function App() {
     clearAdvanceTimer();
     advanceTimerRef.current = setTimeout(() => {
       goM2Next();
-    }, 180);
+    }, AUTO_ADVANCE_DELAY_MS);
   };
 
   const buildReportText = () => [
