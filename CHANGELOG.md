@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.1 - 2026-07-07
+
+Infrastructure and deployment improvements.
+
+- Update page title from "Prototype" to "WAPI Assessment"
+- Add GitHub Actions CI/CD workflow for automatic deployment to production on `main` push
+- Remove hardcoded local cache path from `.npmrc` for CI compatibility
+- Clean up conflicting root `.git` directory
+
 ## 0.1.0 - 2026-06-29
 
 Initial stable prototype baseline for the WAPI H5 assessment flow.
