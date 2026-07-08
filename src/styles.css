@@ -743,9 +743,20 @@ button {
   background: var(--black);
 }
 
+.dark-button:disabled {
+  color: #aaa9b4;
+  background: #efedf3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .dark-button:hover,
 .intro-next-button:hover {
   transform: translateY(-2px);
+}
+
+.dark-button:disabled:hover {
+  transform: none;
 }
 
 .light-button:active,
@@ -811,8 +822,9 @@ button {
   align-self: center;
   margin-top: clamp(20px, 3svh, 28px);
   margin-bottom: 0;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 
 /* Result */

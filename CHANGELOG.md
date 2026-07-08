@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.2 - 2026-07-08
+
+Assessment quality and scoring improvements.
+
+- Restore the next-step CTA on assessment pages while keeping answer auto-advance
+- Add safe navigation handling so manual CTA, previous, and back actions cancel pending auto-advance
+- Refactor Module 1 options to explicitly map to voice identity personas
+- Rewrite Module 2 as objective expression ability questions with one clear correct answer per question
+- Balance Module 2 dimensions with four questions each for language, logic, communication, and audience impact
+- Rework result scoring so expression stars are based on per-dimension correctness instead of soft option weighting
+
 ## 0.1.1 - 2026-07-07
 
 Infrastructure and deployment improvements.

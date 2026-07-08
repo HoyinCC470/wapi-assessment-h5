@@ -2,8 +2,9 @@
 
 ## Baseline Version
 
-- Current stable baseline: `0.1.0`
-- This version is the approved handoff point for ongoing PM, UI, and development collaboration.
+- Current stable baseline: `0.1.2`
+- `0.1.0` remains the original approved UI handoff point.
+- `0.1.2` is the current assessment behavior and scoring baseline for ongoing PM, UI, and development collaboration.
 - New requests should build on this baseline unless a later version is explicitly defined.
 
 ## Scope
