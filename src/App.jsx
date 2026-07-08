@@ -381,6 +381,66 @@ const defaultFormData = {
 };
 
 const AUTO_ADVANCE_DELAY_MS = 450;
+const STORAGE_KEY = "wapi-assessment-progress";
+const STORAGE_VERSION = 1;
+const validScreens = new Set(["register", "m1Intro", "m1Test", "m2Intro", "m2Test", "result"]);
+
+function createEmptyAnswers(length) {
+  return Array(length).fill(null);
+}
+
+function normalizeAnswers(value, length, maxIndex) {
+  const source = Array.isArray(value) ? value : [];
+
+  return createEmptyAnswers(length).map((_, index) => {
+    const answer = source[index];
+    return Number.isInteger(answer) && answer >= 0 && answer <= maxIndex ? answer : null;
+  });
+}
+
+function clampStep(value, maxStep) {
+  return Number.isInteger(value) ? Math.max(0, Math.min(value, maxStep)) : 0;
+}
+
+function readSavedProgress() {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const rawProgress = window.localStorage.getItem(STORAGE_KEY);
+    if (!rawProgress) return null;
+
+    const progress = JSON.parse(rawProgress);
+    if (progress?.version !== STORAGE_VERSION) return null;
+
+    return {
+      screen: validScreens.has(progress.screen) ? progress.screen : "register",
+      formData: {
+        ...defaultFormData,
+        ...(progress.formData && typeof progress.formData === "object" ? progress.formData : {}),
+      },
+      m1Step: clampStep(progress.m1Step, m1Questions.length - 1),
+      m2Step: clampStep(progress.m2Step, m2Questions.length - 1),
+      m1Answers: normalizeAnswers(progress.m1Answers, m1Questions.length, 4),
+      m2Answers: normalizeAnswers(progress.m2Answers, m2Questions.length, 4),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function writeSavedProgress(progress) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      version: STORAGE_VERSION,
+      savedAt: new Date().toISOString(),
+      ...progress,
+    }));
+  } catch {
+    // Storage can fail in private mode or when browser quota is full.
+  }
+}
 
 function useStaggerReveal(revealKey) {
   const [isShown, setIsShown] = useState(false);
@@ -632,7 +692,7 @@ function RatingStars({ name, value }) {
   );
 }
 
-function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentity, statusMessage }) {
+function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentity, onRestart, statusMessage }) {
   const revealClassName = useStaggerReveal(profile.en);
 
   return (
@@ -694,6 +754,7 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
           <div className="result-actions t-stagger-line t-stagger-line--4">
             <button className="outline-action" onClick={onDownloadReport}>Send My Report</button>
             <button className="black-action" onClick={onShareIdentity}>Share My Identity</button>
+            <button className="outline-action restart-action" onClick={onRestart}>重新开始</button>
           </div>
           {statusMessage ? <p className="result-status" key={statusMessage}>{statusMessage}</p> : null}
         </div>
@@ -811,12 +872,13 @@ function buildResultProfile(m1Answers, m2Answers) {
 }
 
 export function App() {
-  const [screen, setScreen] = useState("register");
-  const [formData, setFormData] = useState(defaultFormData);
-  const [m1Step, setM1Step] = useState(0);
-  const [m2Step, setM2Step] = useState(0);
-  const [m1Answers, setM1Answers] = useState(() => Array(m1Questions.length).fill(null));
-  const [m2Answers, setM2Answers] = useState(() => Array(m2Questions.length).fill(null));
+  const [initialProgress] = useState(() => readSavedProgress());
+  const [screen, setScreen] = useState(() => initialProgress?.screen ?? "register");
+  const [formData, setFormData] = useState(() => initialProgress?.formData ?? defaultFormData);
+  const [m1Step, setM1Step] = useState(() => initialProgress?.m1Step ?? 0);
+  const [m2Step, setM2Step] = useState(() => initialProgress?.m2Step ?? 0);
+  const [m1Answers, setM1Answers] = useState(() => initialProgress?.m1Answers ?? createEmptyAnswers(m1Questions.length));
+  const [m2Answers, setM2Answers] = useState(() => initialProgress?.m2Answers ?? createEmptyAnswers(m2Questions.length));
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const advanceTimerRef = useRef(null);
@@ -853,6 +915,17 @@ export function App() {
     clearStatusTimer();
   }, []);
 
+  useEffect(() => {
+    writeSavedProgress({
+      screen,
+      formData,
+      m1Step,
+      m2Step,
+      m1Answers,
+      m2Answers,
+    });
+  }, [screen, formData, m1Step, m2Step, m1Answers, m2Answers]);
+
   const handleFormChange = (field, value) => {
     setFormData((current) => ({
       ...current,
@@ -865,8 +938,20 @@ export function App() {
     setIsTransitioning(false);
     setM1Step(0);
     setM2Step(0);
-    setM1Answers(Array(m1Questions.length).fill(null));
-    setM2Answers(Array(m2Questions.length).fill(null));
+    setM1Answers(createEmptyAnswers(m1Questions.length));
+    setM2Answers(createEmptyAnswers(m2Questions.length));
+  };
+
+  const restartAssessment = () => {
+    clearAdvanceTimer();
+    setIsTransitioning(false);
+    setStatusMessage("");
+    setFormData(defaultFormData);
+    setM1Step(0);
+    setM2Step(0);
+    setM1Answers(createEmptyAnswers(m1Questions.length));
+    setM2Answers(createEmptyAnswers(m2Questions.length));
+    setScreen("register");
   };
 
   const goM1Prev = () => {
@@ -1064,6 +1149,7 @@ export function App() {
       onBack={() => setScreen("m2Test")}
       onDownloadReport={handleDownloadReport}
       onShareIdentity={handleShareIdentity}
+      onRestart={restartAssessment}
       statusMessage={statusMessage}
     />
   );

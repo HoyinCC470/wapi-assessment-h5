@@ -1118,6 +1118,11 @@ button {
   background: #000;
 }
 
+.restart-action {
+  grid-column: 1 / -1;
+  height: 48px;
+}
+
 .outline-action:hover,
 .black-action:hover {
   transform: translateY(-1px);

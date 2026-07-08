@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.3 - 2026-07-08
+
+Assessment progress persistence improvements.
+
+- Add local browser draft persistence for registration fields, current screen, question steps, and answers
+- Automatically restore progress after refresh, browser process kill, or returning to the page on the same device/browser
+- Keep completed results available instead of clearing saved progress automatically
+- Add a result-page restart action to intentionally begin a fresh assessment
+
 ## 0.1.2 - 2026-07-08
 
 Assessment quality and scoring improvements.
