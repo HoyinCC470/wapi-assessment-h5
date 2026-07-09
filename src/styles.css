@@ -1313,8 +1313,8 @@ button {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: #5b3a96;
-  background: #efe6ff;
+  color: var(--identity-color);
+  background: var(--identity-soft);
 }
 
 .profile-heading h2 {
@@ -1326,7 +1326,7 @@ button {
 
 .profile-heading p {
   margin: 0;
-  color: #8581aa;
+  color: var(--identity-color);
   font-size: 12px;
   font-weight: 500;
 }
@@ -1378,7 +1378,8 @@ button {
   border-radius: 16px;
   padding: 14px 16px;
   margin-top: 12px;
-  background: #f7f2fb;
+  background: var(--identity-soft);
+  box-shadow: 0 4px 12px var(--identity-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.72);
   opacity: 0;
   animation: panel-reveal var(--duration-result) var(--ease-smooth-out) forwards;
   animation-delay: calc(380ms + (var(--note-index) * 90ms));

@@ -496,7 +496,7 @@ function Result({ profile, onDownloadReport, onShareIdentity, onRestart, statusM
                 </button>
               </div>
 
-              <div className="result-card profile-card t-stagger-line t-stagger-line--3">
+              <div className={`result-card profile-card theme-${profile.theme} t-stagger-line t-stagger-line--3`}>
                 <div className="profile-heading">
                   <span className="profile-icon"><SlidersHorizontal size={17} /></span>
                   <div>
