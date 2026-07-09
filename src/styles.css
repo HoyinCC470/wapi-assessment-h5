@@ -1485,6 +1485,58 @@ button {
   transform: scale(0.965);
 }
 
+.share-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: max(18px, env(safe-area-inset-top, 0px)) 18px max(18px, env(safe-area-inset-bottom, 0px));
+  background: rgba(18, 20, 28, 0.72);
+  backdrop-filter: blur(10px);
+  animation: screen-reveal var(--duration-medium) var(--ease-smooth-out) both;
+}
+
+.share-preview-panel {
+  width: min(100%, 390px);
+  max-height: 100%;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: 12px;
+}
+
+.share-preview-panel img {
+  width: 100%;
+  max-height: min(74dvh, 760px);
+  border-radius: 22px;
+  object-fit: contain;
+  background: #fff;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.26);
+  -webkit-touch-callout: default;
+  user-select: auto;
+}
+
+.share-preview-panel p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.86);
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.share-preview-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.share-preview-actions .outline-action,
+.share-preview-actions .theme-action-button {
+  height: 48px;
+  border-radius: 16px;
+}
+
 @keyframes dimension-reveal {
   100% {
     opacity: 1;

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import html2canvas from "html2canvas";
 import {
   ArrowLeft,
   ChevronRight,
@@ -70,10 +69,266 @@ const STORAGE_KEY = "wapi-assessment-progress";
 const STORAGE_VERSION = 1;
 const QUESTION_SET_VERSION = "m1-theme-style-23-20260709-m2-20260709-onboard-20260709";
 const STORAGE_TTL_MS = 14 * 24 * 60 * 60 * 1000;
+const reportThemes = {
+  future: { color: "#2477ed", soft: "#edf5ff", shadow: "rgba(36, 119, 237, 0.12)" },
+  impact: { color: "#f49700", soft: "#fff5e6", shadow: "rgba(244, 151, 0, 0.13)" },
+  action: { color: "#18a56f", soft: "#ebf8f2", shadow: "rgba(24, 165, 111, 0.12)" },
+  human: { color: "#e46f9a", soft: "#fff0f6", shadow: "rgba(228, 111, 154, 0.12)" },
+  global: { color: "#26a6a1", soft: "#eaf9f8", shadow: "rgba(38, 166, 161, 0.12)" },
+};
 const validScreens = new Set(["register", "m1Intro", "m1Test", "m2Intro", "m2Test", "result"]);
 
 function createEmptyAnswers(length) {
   return Array(length).fill(null);
+}
+
+function loadCanvasImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
+function canvasToBlob(canvas) {
+  return new Promise((resolve) => {
+    canvas.toBlob(resolve, "image/png", 0.96);
+  });
+}
+
+function roundedRectPath(ctx, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + width, y, x + width, y + height, r);
+  ctx.arcTo(x + width, y + height, x, y + height, r);
+  ctx.arcTo(x, y + height, x, y, r);
+  ctx.arcTo(x, y, x + width, y, r);
+  ctx.closePath();
+}
+
+function fillRoundedRect(ctx, x, y, width, height, radius, fill) {
+  roundedRectPath(ctx, x, y, width, height, radius);
+  ctx.fillStyle = fill;
+  ctx.fill();
+}
+
+function drawCard(ctx, x, y, width, height, radius, fill, shadowColor = "rgba(34, 60, 110, 0.06)") {
+  ctx.save();
+  ctx.shadowColor = shadowColor;
+  ctx.shadowBlur = 16;
+  ctx.shadowOffsetY = 6;
+  fillRoundedRect(ctx, x, y, width, height, radius, fill);
+  ctx.restore();
+}
+
+function drawImageCover(ctx, image, x, y, width, height, radius) {
+  const sourceRatio = image.width / image.height;
+  const targetRatio = width / height;
+  let sx = 0;
+  let sy = 0;
+  let sw = image.width;
+  let sh = image.height;
+
+  if (sourceRatio > targetRatio) {
+    sw = image.height * targetRatio;
+    sx = (image.width - sw) / 2;
+  } else {
+    sh = image.width / targetRatio;
+    sy = (image.height - sh) / 2;
+  }
+
+  ctx.save();
+  roundedRectPath(ctx, x, y, width, height, radius);
+  ctx.clip();
+  ctx.drawImage(image, sx, sy, sw, sh, x, y, width, height);
+  ctx.restore();
+}
+
+function wrapText(ctx, text, maxWidth) {
+  const value = String(text ?? "");
+  const useWords = value.includes(" ");
+  const tokens = useWords ? value.split(/\s+/) : Array.from(value);
+  const lines = [];
+  let line = "";
+
+  tokens.forEach((token) => {
+    const separator = useWords && line ? " " : "";
+    const next = `${line}${separator}${token}`;
+    if (!line || ctx.measureText(next).width <= maxWidth) {
+      line = next;
+      return;
+    }
+    lines.push(line);
+    line = token;
+  });
+
+  if (line) lines.push(line);
+  return lines;
+}
+
+function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight, maxLines = Infinity) {
+  const lines = wrapText(ctx, text, maxWidth).slice(0, maxLines);
+  lines.forEach((line, index) => {
+    ctx.fillText(line, x, y + index * lineHeight);
+  });
+  return lines.length * lineHeight;
+}
+
+function drawStarShape(ctx, cx, cy, outerRadius, innerRadius, fill) {
+  ctx.beginPath();
+  for (let index = 0; index < 10; index += 1) {
+    const angle = -Math.PI / 2 + index * (Math.PI / 5);
+    const radius = index % 2 === 0 ? outerRadius : innerRadius;
+    const x = cx + Math.cos(angle) * radius;
+    const y = cy + Math.sin(angle) * radius;
+    if (index === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+}
+
+function drawStars(ctx, x, y, value) {
+  for (let index = 0; index < 5; index += 1) {
+    drawStarShape(ctx, x + index * 29, y, 12, 6, index < value ? "#f7df70" : "#f1eff4");
+  }
+}
+
+function drawSliderIcon(ctx, cx, cy, color) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  [[-14, -8, 14, -8], [-14, 0, 14, 0], [-14, 8, 14, 8]].forEach(([x1, y1, x2, y2]) => {
+    ctx.beginPath();
+    ctx.moveTo(cx + x1, cy + y1);
+    ctx.lineTo(cx + x2, cy + y2);
+    ctx.stroke();
+  });
+  ctx.fillStyle = color;
+  [[-5, -8], [7, 0], [-1, 8]].forEach(([x, y]) => {
+    ctx.beginPath();
+    ctx.arc(cx + x, cy + y, 3.8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+async function generateReportImageBlob(profile, descriptionLanguage) {
+  const theme = reportThemes[profile.theme] ?? reportThemes.future;
+  const [logo, personaImage] = await Promise.all([
+    loadCanvasImage("/wapi-logo-wide.png"),
+    loadCanvasImage(profile.image),
+  ]);
+  const scale = 2;
+  const width = 750;
+  const padding = 34;
+  const cardWidth = width - padding * 2;
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const description = descriptionLanguage === "cn" ? profile.descriptionCn : profile.description;
+
+  canvas.width = width * scale;
+  canvas.height = 1580 * scale;
+  ctx.scale(scale, scale);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, width, 1580);
+  ctx.textBaseline = "top";
+
+  let y = 28;
+  const logoWidth = 252;
+  ctx.drawImage(logo, padding, y, logoWidth, logoWidth / (logo.width / logo.height));
+  y += 88;
+
+  drawCard(ctx, padding, y, cardWidth, 356, 28, "#ffffff", theme.shadow);
+  fillRoundedRect(ctx, padding, y, cardWidth, 10, 8, theme.color);
+  drawImageCover(ctx, personaImage, padding + 24, y + 48, 240, 300, 18);
+
+  const copyX = padding + 300;
+  const copyCenter = copyX + 170;
+  ctx.textAlign = "center";
+  ctx.fillStyle = theme.color;
+  ctx.font = "700 22px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  ctx.fillText("Your Voice Identity", copyCenter, y + 54);
+  ctx.fillStyle = "#19191f";
+  ctx.font = "800 38px -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  ctx.fillText(profile.cn, copyCenter, y + 98);
+  ctx.fillStyle = "#8581aa";
+  ctx.font = "600 22px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  ctx.fillText(profile.en, copyCenter, y + 150);
+
+  fillRoundedRect(ctx, copyX + 18, y + 205, 304, 116, 24, theme.soft);
+  ctx.fillStyle = theme.color;
+  ctx.font = "700 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  ctx.fillText("Your Superpower", copyCenter, y + 224);
+  ctx.fillStyle = "#2f2e37";
+  ctx.font = "800 25px -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', sans-serif";
+  ctx.fillText(profile.superpowerCn, copyCenter, y + 260);
+  ctx.fillStyle = "#686684";
+  ctx.font = "600 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  drawWrappedText(ctx, profile.superpowerEn, copyCenter, y + 294, 260, 22, 2);
+  y += 388;
+
+  ctx.textAlign = "left";
+  ctx.font = "400 25px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif";
+  const descriptionHeight = Math.max(112, wrapText(ctx, description, cardWidth - 56).length * 34 + 42);
+  fillRoundedRect(ctx, padding, y, cardWidth, descriptionHeight, 22, theme.soft);
+  ctx.fillStyle = "#24242c";
+  drawWrappedText(ctx, description, padding + 28, y + 22, cardWidth - 56, 34, 5);
+  y += descriptionHeight + 30;
+
+  drawCard(ctx, padding, y, cardWidth, 500, 24, "#ffffff", "rgba(34, 60, 110, 0.055)");
+  fillRoundedRect(ctx, padding + 24, y + 24, 58, 58, 29, theme.soft);
+  drawSliderIcon(ctx, padding + 53, y + 53, theme.color);
+  ctx.fillStyle = "#2b2a31";
+  ctx.font = "600 38px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  ctx.fillText("Your Expression Profile", padding + 104, y + 18);
+  ctx.fillStyle = theme.color;
+  ctx.font = "500 22px -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif";
+  ctx.fillText("表达力画像", padding + 104, y + 68);
+
+  let rowY = y + 132;
+  profile.dimensions.forEach(([name, , value]) => {
+    ctx.fillStyle = "#66636e";
+    ctx.font = "500 25px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    ctx.fillText(name, padding + 24, rowY);
+    drawStars(ctx, padding + cardWidth - 174, rowY + 15, value);
+    rowY += 48;
+  });
+
+  const noteX = padding + 24;
+  const noteWidth = cardWidth - 48;
+  fillRoundedRect(ctx, noteX, rowY + 10, noteWidth, 122, 20, theme.soft);
+  ctx.fillStyle = "#383640";
+  ctx.font = "600 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  ctx.fillText("Your Strength", noteX + 24, rowY + 31);
+  ctx.font = "400 22px -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif";
+  drawWrappedText(ctx, profile.strength, noteX + 24, rowY + 70, noteWidth - 48, 30, 2);
+
+  rowY += 150;
+  fillRoundedRect(ctx, noteX, rowY + 10, noteWidth, 138, 20, theme.soft);
+  ctx.fillStyle = "#383640";
+  ctx.font = "600 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  ctx.fillText("Your Next Growth Opportunity", noteX + 24, rowY + 31);
+  ctx.font = "400 22px -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif";
+  drawWrappedText(ctx, profile.growth, noteX + 24, rowY + 70, noteWidth - 48, 30, 3);
+  y += 540;
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#9b99a6";
+  ctx.font = "500 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  ctx.fillText("WAPI Assessment", width / 2, y + 16);
+
+  const finalHeight = y + 64;
+  const output = document.createElement("canvas");
+  output.width = width * scale;
+  output.height = finalHeight * scale;
+  output.getContext("2d").drawImage(canvas, 0, 0);
+  const blob = await canvasToBlob(output);
+  if (!blob) throw new Error("Unable to export report image");
+  return blob;
 }
 
 function normalizeAnswers(value, length, maxIndex) {
@@ -451,27 +706,55 @@ function RatingStars({ name, value }) {
 
 function Result({ profile, onShareReport, onRestart, statusMessage }) {
   const revealClassName = useStaggerReveal(profile.en);
-  const captureRef = useRef(null);
   const [isSharingReport, setIsSharingReport] = useState(false);
+  const [shareImageUrl, setShareImageUrl] = useState("");
+  const [shareFile, setShareFile] = useState(null);
   const [descriptionState, setDescriptionState] = useState({ profileId: profile.id, language: "en" });
   const descriptionLanguage = descriptionState.profileId === profile.id ? descriptionState.language : "en";
   const isDescriptionChinese = descriptionLanguage === "cn";
 
   const handleShareReport = async () => {
-    if (!captureRef.current || isSharingReport) return;
+    if (isSharingReport) return;
     setIsSharingReport(true);
     try {
-      await onShareReport(captureRef.current);
+      const report = await onShareReport(descriptionLanguage);
+      if (!report) return;
+      const { file, url } = report;
+      if (shareImageUrl) URL.revokeObjectURL(shareImageUrl);
+      setShareFile(file);
+      setShareImageUrl(url);
     } finally {
       setIsSharingReport(false);
     }
   };
 
+  const closeSharePreview = () => {
+    if (shareImageUrl) URL.revokeObjectURL(shareImageUrl);
+    setShareImageUrl("");
+    setShareFile(null);
+  };
+
+  const systemShareReport = async () => {
+    if (!shareFile || !navigator.canShare?.({ files: [shareFile] }) || !navigator.share) return;
+    try {
+      await navigator.share({
+        title: "WAPI Assessment Report",
+        files: [shareFile],
+      });
+    } catch {
+      // User cancellation does not need an error state in the image preview.
+    }
+  };
+
+  useEffect(() => () => {
+    if (shareImageUrl) URL.revokeObjectURL(shareImageUrl);
+  }, [shareImageUrl]);
+
   return (
     <PhoneShell wideDesktop>
       <section className="result-page screen-reveal">
         <div className={`result-content ${revealClassName}`}>
-          <div className="result-capture" ref={captureRef}>
+          <div className="result-capture">
             <div className="result-top">
               <img className="result-brand-logo" src="/wapi-logo-wide.png" alt="WAPI" />
             </div>
@@ -547,6 +830,24 @@ function Result({ profile, onShareReport, onRestart, statusMessage }) {
           </div>
           {statusMessage ? <p className="result-status" key={statusMessage}>{statusMessage}</p> : null}
         </div>
+        {shareImageUrl ? (
+          <div className="share-preview" role="dialog" aria-modal="true" aria-label="Share report image preview">
+            <div className="share-preview-panel">
+              <img src={shareImageUrl} alt="WAPI Assessment report" />
+              <p>长按图片保存，或使用系统分享。</p>
+              <div className="share-preview-actions">
+                <button className="outline-action" onClick={closeSharePreview}>关闭</button>
+                <button
+                  className={`theme-action-button theme-${profile.theme}`}
+                  onClick={systemShareReport}
+                  disabled={!shareFile || !navigator.canShare?.({ files: [shareFile] })}
+                >
+                  系统分享
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </section>
     </PhoneShell>
   );
@@ -846,52 +1147,22 @@ export function App() {
     }, AUTO_ADVANCE_DELAY_MS);
   };
 
-  const handleShareReport = async (captureElement) => {
+  const handleShareReport = async (descriptionLanguage) => {
     try {
-      showStatus("正在生成报告截图...");
+      showStatus("正在生成报告图片...");
       await document.fonts?.ready;
-      const canvas = await html2canvas(captureElement, {
-        backgroundColor: "#ffffff",
-        scale: Math.min(window.devicePixelRatio || 1, 2),
-        useCORS: true,
-        logging: false,
-        ignoreElements: (element) => element.classList?.contains("translation-toggle"),
-      });
-      const blob = await new Promise((resolve) => {
-        canvas.toBlob(resolve, "image/png", 0.96);
-      });
-
-      if (!blob) {
-        showStatus("截图生成失败，请稍后重试。");
-        return;
-      }
-
+      const blob = await generateReportImageBlob(resultProfile, descriptionLanguage);
       const file = new File([blob], "wapi-assessment-report.png", { type: "image/png" });
-      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
-        await navigator.share({
-          title: "WAPI Assessment Report",
-          files: [file],
-        });
-        showStatus("报告截图已分享。");
-        return;
-      }
-
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "wapi-assessment-report.png";
-      document.body.append(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-      showStatus("当前浏览器不支持直接分享，已下载报告截图。");
+      showStatus("报告图片已生成。");
+      return { file, url };
     } catch (error) {
       if (error?.name === "AbortError") {
         showStatus("分享已取消。");
-        return;
+        return null;
       }
-      showStatus("截图分享失败，请稍后重试。");
-      return;
+      showStatus("报告图片生成失败，请稍后重试。");
+      throw error;
     }
   };
 
