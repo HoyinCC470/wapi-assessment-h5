@@ -11,6 +11,7 @@
 - Simplify result identity copy, remove learner name from the hero card, and add animated English/Chinese translation toggle for the result description
 - Replace result description translation text button with an icon control and ensure description cards inherit the active identity theme color
 - Soften result card shadows and reduce the description translation icon button size
+- Further reduce result card shadow spread and theme shadow opacity for a cleaner mobile look
 
 ## 0.1.3 - 2026-07-08
 
