@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import html2canvas from "html2canvas";
 import {
   ArrowLeft,
   ChevronRight,
@@ -448,85 +449,100 @@ function RatingStars({ name, value }) {
   );
 }
 
-function Result({ profile, onDownloadReport, onShareIdentity, onRestart, statusMessage }) {
+function Result({ profile, onShareReport, onRestart, statusMessage }) {
   const revealClassName = useStaggerReveal(profile.en);
+  const captureRef = useRef(null);
+  const [isSharingReport, setIsSharingReport] = useState(false);
   const [descriptionState, setDescriptionState] = useState({ profileId: profile.id, language: "en" });
   const descriptionLanguage = descriptionState.profileId === profile.id ? descriptionState.language : "en";
   const isDescriptionChinese = descriptionLanguage === "cn";
+
+  const handleShareReport = async () => {
+    if (!captureRef.current || isSharingReport) return;
+    setIsSharingReport(true);
+    try {
+      await onShareReport(captureRef.current);
+    } finally {
+      setIsSharingReport(false);
+    }
+  };
 
   return (
     <PhoneShell wideDesktop>
       <section className="result-page screen-reveal">
         <div className={`result-content ${revealClassName}`}>
-          <div className="result-top">
-            <img className="result-brand-logo" src="/wapi-logo-wide.png" alt="WAPI" />
-          </div>
+          <div className="result-capture" ref={captureRef}>
+            <div className="result-top">
+              <img className="result-brand-logo" src="/wapi-logo-wide.png" alt="WAPI" />
+            </div>
 
-          <div className="result-scroll">
-            <div className="result-stack">
-              <div className={`result-card identity-card result-reveal-card theme-${profile.theme} t-stagger-line t-stagger-line--1`}>
-                <img src={profile.image} alt={profile.en} />
-                <div className="identity-copy">
-                  <p className="identity-eyebrow result-text-reveal">Your Voice Identity</p>
-                  <h2 className="result-text-reveal">{profile.cn}</h2>
-                  <p className="identity-en result-text-reveal">{profile.en}</p>
-                  <div className="superpower-title result-text-reveal">
-                    <span>Your Superpower</span>
-                    <em>{profile.superpowerCn}</em>
-                    <strong>{profile.superpowerEn}</strong>
-                  </div>
-                </div>
-              </div>
-
-              <div className={`description-card theme-${profile.theme} t-stagger-line t-stagger-line--2`}>
-                <p className="description-text" key={descriptionLanguage}>
-                  {isDescriptionChinese ? profile.descriptionCn : profile.description}
-                </p>
-                <button
-                  className="translation-toggle"
-                  type="button"
-                  aria-label={isDescriptionChinese ? "Show English description" : "Show Chinese translation"}
-                  title={isDescriptionChinese ? "Show English" : "中文翻译"}
-                  onClick={() => setDescriptionState({
-                    profileId: profile.id,
-                    language: isDescriptionChinese ? "en" : "cn",
-                  })}
-                >
-                  <Languages size={14} aria-hidden="true" />
-                </button>
-              </div>
-
-              <div className={`result-card profile-card theme-${profile.theme} t-stagger-line t-stagger-line--3`}>
-                <div className="profile-heading">
-                  <span className="profile-icon"><SlidersHorizontal size={17} /></span>
-                  <div>
-                    <h2>Your Expression Profile</h2>
-                    <p>表达力画像</p>
-                  </div>
-                </div>
-                <div className="dimension-list">
-                  {profile.dimensions.map(([name, cn, value], index) => (
-                    <div className="dimension-row" style={{ "--dimension-index": index }} key={name}>
-                      <span>{name}<small>{cn}</small></span>
-                      <RatingStars name={name} value={value} />
+            <div className="result-scroll">
+              <div className="result-stack">
+                <div className={`result-card identity-card result-reveal-card theme-${profile.theme} t-stagger-line t-stagger-line--1`}>
+                  <img src={profile.image} alt={profile.en} />
+                  <div className="identity-copy">
+                    <p className="identity-eyebrow result-text-reveal">Your Voice Identity</p>
+                    <h2 className="result-text-reveal">{profile.cn}</h2>
+                    <p className="identity-en result-text-reveal">{profile.en}</p>
+                    <div className="superpower-title result-text-reveal">
+                      <span>Your Superpower</span>
+                      <em>{profile.superpowerCn}</em>
+                      <strong>{profile.superpowerEn}</strong>
                     </div>
-                  ))}
+                  </div>
                 </div>
-                <div className="result-note" style={{ "--note-index": 0 }}>
-                  <h3>Your Strength</h3>
-                  <p>{profile.strength}</p>
+
+                <div className={`description-card theme-${profile.theme} t-stagger-line t-stagger-line--2`}>
+                  <p className="description-text" key={descriptionLanguage}>
+                    {isDescriptionChinese ? profile.descriptionCn : profile.description}
+                  </p>
+                  <button
+                    className="translation-toggle"
+                    type="button"
+                    aria-label={isDescriptionChinese ? "Show English description" : "Show Chinese translation"}
+                    title={isDescriptionChinese ? "Show English" : "中文翻译"}
+                    onClick={() => setDescriptionState({
+                      profileId: profile.id,
+                      language: isDescriptionChinese ? "en" : "cn",
+                    })}
+                  >
+                    <Languages size={14} aria-hidden="true" />
+                  </button>
                 </div>
-                <div className="result-note" style={{ "--note-index": 1 }}>
-                  <h3>Your Next Growth Opportunity</h3>
-                  <p>{profile.growth}</p>
+
+                <div className={`result-card profile-card theme-${profile.theme} t-stagger-line t-stagger-line--3`}>
+                  <div className="profile-heading">
+                    <span className="profile-icon"><SlidersHorizontal size={17} /></span>
+                    <div>
+                      <h2>Your Expression Profile</h2>
+                      <p>表达力画像</p>
+                    </div>
+                  </div>
+                  <div className="dimension-list">
+                    {profile.dimensions.map(([name, cn, value], index) => (
+                      <div className="dimension-row" style={{ "--dimension-index": index }} key={name}>
+                        <span>{name}<small>{cn}</small></span>
+                        <RatingStars name={name} value={value} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="result-note" style={{ "--note-index": 0 }}>
+                    <h3>Your Strength</h3>
+                    <p>{profile.strength}</p>
+                  </div>
+                  <div className="result-note" style={{ "--note-index": 1 }}>
+                    <h3>Your Next Growth Opportunity</h3>
+                    <p>{profile.growth}</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="result-actions t-stagger-line t-stagger-line--4">
-            <button className="outline-action" onClick={onDownloadReport}>Send My Report</button>
-            <button className="black-action" onClick={onShareIdentity}>Share My Identity</button>
+          <div className={`result-actions theme-${profile.theme} t-stagger-line t-stagger-line--4`}>
+            <button className="theme-action-button" onClick={handleShareReport} disabled={isSharingReport}>
+              {isSharingReport ? "Preparing..." : "Share My Report"}
+            </button>
             <button className="outline-action restart-action" onClick={onRestart}>重新开始</button>
           </div>
           {statusMessage ? <p className="result-status" key={statusMessage}>{statusMessage}</p> : null}
@@ -686,7 +702,6 @@ export function App() {
   const statusTimerRef = useRef(null);
 
   const resultProfile = buildResultProfile(m1Answers, m2Answers);
-  const learnerName = formData.name.trim() || "WAPI Learner";
 
   const clearAdvanceTimer = () => {
     if (advanceTimerRef.current) {
@@ -831,67 +846,53 @@ export function App() {
     }, AUTO_ADVANCE_DELAY_MS);
   };
 
-  const buildReportText = () => [
-    "WAPI Assessment Result",
-    "",
-    `Learner: ${learnerName}`,
-    `Age: ${formData.age || "-"}`,
-    `Public Speaking Experience: ${formData.speakingExperience || "-"}`,
-    `English Learning Environment: ${formData.background || "-"}`,
-    `Test Code: ${formData.testCode || "-"}`,
-    "",
-    `Voice Identity: ${resultProfile.en} / ${resultProfile.cn}`,
-    `Superpower: ${resultProfile.superpowerEn} / ${resultProfile.superpowerCn}`,
-    "",
-    "Expression Profile",
-    ...resultProfile.dimensions.map(([name, cn, value]) => `${name} (${cn}): ${value}/5`),
-    "",
-    `Strength: ${resultProfile.strength}`,
-    `Next Growth Opportunity: ${resultProfile.growth}`,
-  ].join("\n");
-
-  const handleDownloadReport = () => {
-    const blob = new Blob([buildReportText()], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "wapi-assessment-report.txt";
-    document.body.append(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-    showStatus("Report downloaded.");
-  };
-
-  const handleShareIdentity = async () => {
-    const text = [
-      `${learnerName} got ${resultProfile.en} on WAPI Assessment.`,
-      `Superpower: ${resultProfile.superpowerEn} / ${resultProfile.superpowerCn}`,
-      resultProfile.description,
-    ].join("\n");
-
+  const handleShareReport = async (captureElement) => {
     try {
-      if (navigator.share) {
-        await navigator.share({
-          title: "WAPI Assessment Result",
-          text,
-        });
-        showStatus("Result shared.");
+      showStatus("正在生成报告截图...");
+      await document.fonts?.ready;
+      const canvas = await html2canvas(captureElement, {
+        backgroundColor: "#ffffff",
+        scale: Math.min(window.devicePixelRatio || 1, 2),
+        useCORS: true,
+        logging: false,
+        ignoreElements: (element) => element.classList?.contains("translation-toggle"),
+      });
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob(resolve, "image/png", 0.96);
+      });
+
+      if (!blob) {
+        showStatus("截图生成失败，请稍后重试。");
         return;
       }
 
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-        showStatus("Result copied to clipboard.");
+      const file = new File([blob], "wapi-assessment-report.png", { type: "image/png" });
+      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+        await navigator.share({
+          title: "WAPI Assessment Report",
+          files: [file],
+        });
+        showStatus("报告截图已分享。");
         return;
       }
-    } catch {
-      showStatus("Sharing was cancelled.");
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "wapi-assessment-report.png";
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showStatus("当前浏览器不支持直接分享，已下载报告截图。");
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        showStatus("分享已取消。");
+        return;
+      }
+      showStatus("截图分享失败，请稍后重试。");
       return;
     }
-
-    window.location.href = `mailto:?subject=${encodeURIComponent("WAPI Assessment Result")}&body=${encodeURIComponent(text)}`;
-    showStatus("Opened your mail app.");
   };
 
   if (screen === "register") {
@@ -950,10 +951,7 @@ export function App() {
   return (
     <Result
       profile={resultProfile}
-      learnerName={learnerName}
-      onBack={() => setScreen("m2Test")}
-      onDownloadReport={handleDownloadReport}
-      onShareIdentity={handleShareIdentity}
+      onShareReport={handleShareReport}
       onRestart={restartAssessment}
       statusMessage={statusMessage}
     />

@@ -14,6 +14,7 @@
 - Further reduce result card shadow spread and theme shadow opacity for a cleaner mobile look
 - Replace the result page navigation header with the WAPI wide brand logo
 - Apply the active identity theme color to the expression profile icon, subtitle, and insight panels
+- Replace separate result report/share actions with one themed `Share My Report` screenshot CTA
 
 ## 0.1.3 - 2026-07-08
 

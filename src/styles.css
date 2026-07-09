@@ -392,7 +392,7 @@ button {
 .light-button:active,
 .dark-button:active,
 .outline-action:active,
-.black-action:active,
+.theme-action-button:active,
 .nav-icon-button:active,
 .intro-next-button:active {
   transform: scale(0.965);
@@ -1406,7 +1406,7 @@ button {
 .result-actions {
   flex: 0 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px;
   padding-top: 12px;
   padding-bottom: 0;
@@ -1430,7 +1430,7 @@ button {
 }
 
 .outline-action,
-.black-action {
+.theme-action-button {
   height: 58px;
   border-radius: 18px;
   font-size: 14px;
@@ -1448,30 +1448,40 @@ button {
   background: #fff;
 }
 
-.black-action {
+.theme-action-button {
   border: 0;
   color: #fff;
-  background: #000;
+  background: var(--identity-color);
+  box-shadow: 0 10px 22px var(--identity-shadow);
+}
+
+.theme-action-button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+  transform: none;
 }
 
 .restart-action {
-  grid-column: 1 / -1;
   height: 48px;
 }
 
 .outline-action:hover,
-.black-action:hover {
+.theme-action-button:hover {
   transform: translateY(-1px);
   box-shadow: 0 12px 24px rgba(34, 60, 110, 0.12);
 }
 
 .outline-action:hover {
-  border-color: #dcd2ef;
-  background: #fbf8ff;
+  border-color: color-mix(in srgb, var(--identity-color) 28%, #eee8f8);
+  background: color-mix(in srgb, var(--identity-soft) 42%, #fff);
+}
+
+.theme-action-button:hover {
+  box-shadow: 0 13px 26px var(--identity-shadow);
 }
 
 .outline-action:active,
-.black-action:active {
+.theme-action-button:active {
   transform: scale(0.965);
 }
 
@@ -1533,7 +1543,7 @@ button {
   .rating-stars svg,
   .translation-toggle,
   .outline-action,
-  .black-action {
+  .theme-action-button {
     transition: none !important;
   }
 }
