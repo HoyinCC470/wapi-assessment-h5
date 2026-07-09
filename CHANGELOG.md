@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Keep `Send My Report` and `Share My Identity` as mock-stage result actions until the report/share flow is finalized
+- Slow answer auto-advance slightly so selected-state feedback is visible on real devices
+- Enlarge result identity artwork inside the result card without changing the page flow
+- Add Motion Lite refinements for page entry, module intros, answer selection feedback, and result reveal while respecting reduced-motion settings
+
 ## 0.1.3 - 2026-07-08
 
 Assessment progress persistence improvements.

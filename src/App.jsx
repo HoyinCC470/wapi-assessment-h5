@@ -6,268 +6,13 @@ import {
   SlidersHorizontal,
   Star,
 } from "lucide-react";
-
-const m1Questions = [
-  {
-    prompt: "刷手机时，什么最容易让你停下来?",
-    options: [
-      { text: "一个我从未想过的新观点", persona: "insight" },
-      { text: "一个真实而打动人的故事", persona: "storyteller" },
-      { text: "一个关于未来的大胆想法", persona: "future" },
-      { text: "一个值得更多人关注的问题", persona: "advocate" },
-      { text: "一个正在改变世界的人或项目", persona: "catalyst" },
-    ],
-  },
-  {
-    prompt: "如果学校突然放假一周，并提供一次特别体验机会，你最想参加哪一个?",
-    options: [
-      { text: "跟随专家探索一个陌生国家或文化", persona: "insight" },
-      { text: "采访不同背景的人，收集他们的人生故事", persona: "storyteller" },
-      { text: "参观未来科技实验室", persona: "future" },
-      { text: "深入了解一个真实社会问题", persona: "advocate" },
-      { text: "加入一个团队，完成一个真实项目", persona: "catalyst" },
-    ],
-  },
-  {
-    prompt: "如果有机会让很多人听你分享一个主题，你最想讲什么?",
-    options: [
-      { text: "一个改变我认知的新发现", persona: "insight" },
-      { text: "一个值得被听见的故事", persona: "storyteller" },
-      { text: "我对未来世界的想象", persona: "future" },
-      { text: "一个我希望更多人关注的问题", persona: "advocate" },
-      { text: "一个我想推动实现的改变", persona: "catalyst" },
-    ],
-  },
-  {
-    prompt: "当你发现一个有趣的问题时，你最可能做什么?",
-    options: [
-      { text: "查资料，想弄清楚它为什么会发生", persona: "insight" },
-      { text: "找人讨论，听听不同人的想法", persona: "storyteller" },
-      { text: "想象未来会产生什么影响", persona: "future" },
-      { text: "质疑现状，思考为什么没人解决它", persona: "advocate" },
-      { text: "想办法做点什么来改善它", persona: "catalyst" },
-    ],
-  },
-  {
-    prompt: "朋友们最可能因为什么事情想到你?",
-    options: [
-      { text: "这个问题问他，他肯定知道不少。", persona: "insight" },
-      { text: "跟他聊天总是很舒服。", persona: "storyteller" },
-      { text: "他总有一些别人想不到的点子。", persona: "future" },
-      { text: "他很敢说出自己的真实想法。", persona: "advocate" },
-      { text: "有事情想做成，找他准没错。", persona: "catalyst" },
-    ],
-  },
-  {
-    prompt: "如果你参加一个团队项目，你通常最自然会扮演什么角色?",
-    options: [
-      { text: "负责研究和寻找信息的人", persona: "insight" },
-      { text: "负责提出新想法的人", persona: "future" },
-      { text: "负责协调沟通的人", persona: "storyteller" },
-      { text: "负责提出不同观点的人", persona: "advocate" },
-      { text: "负责推进执行的人", persona: "catalyst" },
-    ],
-  },
-  {
-    prompt: "当你面对一个复杂问题时，你最希望自己能够：",
-    options: [
-      { text: "看见更大的世界", persona: "insight" },
-      { text: "更理解不同的人", persona: "storyteller" },
-      { text: "想出新的可能性", persona: "future" },
-      { text: "推动积极的改变", persona: "advocate" },
-      { text: "把想法变成现实", persona: "catalyst" },
-    ],
-  },
-  {
-    prompt: "如果十年后的你回头看今天，你最希望自己留下什么?",
-    options: [
-      { text: "一个让人们更了解世界的新发现", persona: "insight" },
-      { text: "一群因为你而连接在一起的人", persona: "storyteller" },
-      { text: "一个启发未来的新想法", persona: "future" },
-      { text: "一个改变大家看法的重要声音", persona: "advocate" },
-      { text: "一个真正产生影响的项目或成果", persona: "catalyst" },
-    ],
-  },
-];
-
-const m2Questions = [
-  {
-    prompt: "Choose the best word: “I am ___ to join the speech club.”",
-    dimension: "language",
-    correctOptionId: "b",
-    options: [
-      { id: "a", text: "table" },
-      { id: "b", text: "happy" },
-      { id: "c", text: "quickly" },
-      { id: "d", text: "blue" },
-    ],
-  },
-  {
-    prompt: "Which sentence should come next? “I wanted to learn public speaking. ___”",
-    dimension: "logic",
-    correctOptionId: "c",
-    options: [
-      { id: "a", text: "The weather was cold." },
-      { id: "b", text: "My shoes are new." },
-      { id: "c", text: "So I joined a speech club." },
-      { id: "d", text: "Apples are sweet." },
-    ],
-  },
-  {
-    prompt: "Which sentence directly speaks to the audience?",
-    dimension: "communication",
-    correctOptionId: "d",
-    options: [
-      { id: "a", text: "The school has many clubs." },
-      { id: "b", text: "Public speaking can be useful." },
-      { id: "c", text: "My speech has three parts." },
-      { id: "d", text: "Have you ever felt nervous before speaking?" },
-    ],
-  },
-  {
-    prompt: "Which opening creates curiosity about the topic?",
-    dimension: "impact",
-    correctOptionId: "a",
-    options: [
-      { id: "a", text: "What if one sentence could change how people see you?" },
-      { id: "b", text: "I will begin now." },
-      { id: "c", text: "This is my speech." },
-      { id: "d", text: "I have slides." },
-    ],
-  },
-  {
-    prompt: "“The audience listened carefully.” What does audience mean?",
-    dimension: "communication",
-    correctOptionId: "b",
-    options: [
-      { id: "a", text: "one speaker" },
-      { id: "b", text: "people watching or listening" },
-      { id: "c", text: "a desk" },
-      { id: "d", text: "a book" },
-    ],
-  },
-  {
-    prompt: "Which is the best example to support “Reading helps students learn new words”?",
-    dimension: "logic",
-    correctOptionId: "c",
-    options: [
-      { id: "a", text: "Reading is quiet." },
-      { id: "b", text: "Some books are heavy." },
-      { id: "c", text: "Students often meet new vocabulary in books." },
-      { id: "d", text: "Libraries have chairs." },
-    ],
-  },
-  {
-    prompt: "Which sentence uses correct grammar?",
-    dimension: "language",
-    correctOptionId: "d",
-    options: [
-      { id: "a", text: "She explain her idea clearly." },
-      { id: "b", text: "She explaining her idea clearly." },
-      { id: "c", text: "She clear explain her idea." },
-      { id: "d", text: "She explains her idea clearly." },
-    ],
-  },
-  {
-    prompt: "Which reason is strongest? “Students should practice speaking because...”",
-    dimension: "impact",
-    correctOptionId: "a",
-    options: [
-      { id: "a", text: "it helps them share ideas clearly." },
-      { id: "b", text: "microphones exist." },
-      { id: "c", text: "rooms have chairs." },
-      { id: "d", text: "it is sometimes loud." },
-    ],
-  },
-  {
-    prompt: "Choose the best version: “I think this idea is good because it help people.”",
-    dimension: "language",
-    correctOptionId: "c",
-    options: [
-      { id: "a", text: "because it helping people" },
-      { id: "b", text: "because help people" },
-      { id: "c", text: "because it helps people" },
-      { id: "d", text: "because helped people now" },
-    ],
-  },
-  {
-    prompt: "Put the speech structure in order.",
-    dimension: "logic",
-    correctOptionId: "d",
-    options: [
-      { id: "a", text: "Conclusion → Point → Example" },
-      { id: "b", text: "Example → Conclusion → Point" },
-      { id: "c", text: "Random idea → End → Start" },
-      { id: "d", text: "Point → Example → Conclusion" },
-    ],
-  },
-  {
-    prompt: "Which sentence is most appropriate in a formal presentation?",
-    dimension: "communication",
-    correctOptionId: "a",
-    options: [
-      { id: "a", text: "I would like to explain why this issue matters." },
-      { id: "b", text: "This thing is kinda cool, you know." },
-      { id: "c", text: "Whatever, listen up." },
-      { id: "d", text: "I guess this is fine." },
-    ],
-  },
-  {
-    prompt: "Which call to action is specific and clear?",
-    dimension: "impact",
-    correctOptionId: "b",
-    options: [
-      { id: "a", text: "Be better someday." },
-      { id: "b", text: "This week, practice one 60-second speech with a friend." },
-      { id: "c", text: "Think about things." },
-      { id: "d", text: "Maybe try something." },
-    ],
-  },
-  {
-    prompt: "Choose the most natural sentence.",
-    dimension: "language",
-    correctOptionId: "d",
-    options: [
-      { id: "a", text: "Although difficult topic, she clear explained it." },
-      { id: "b", text: "She explained although the topic." },
-      { id: "c", text: "Difficult clearly she explained." },
-      { id: "d", text: "Although the topic was difficult, she explained it clearly." },
-    ],
-  },
-  {
-    prompt: "What is the function of this sentence: “For example, a student might interview a local leader.”",
-    dimension: "logic",
-    correctOptionId: "a",
-    options: [
-      { id: "a", text: "Supporting example" },
-      { id: "b", text: "Main claim" },
-      { id: "c", text: "Closing call" },
-      { id: "d", text: "Topic change" },
-    ],
-  },
-  {
-    prompt: "Which sentence includes a clear transition?",
-    dimension: "communication",
-    correctOptionId: "c",
-    options: [
-      { id: "a", text: "My next thing is there." },
-      { id: "b", text: "Ideas are everywhere." },
-      { id: "c", text: "First, I will explain the problem." },
-      { id: "d", text: "The room is bright." },
-    ],
-  },
-  {
-    prompt: "Which ending is most memorable for an audience?",
-    dimension: "impact",
-    correctOptionId: "b",
-    options: [
-      { id: "a", text: "That is all." },
-      { id: "b", text: "Start with one brave sentence today." },
-      { id: "c", text: "I am finished." },
-      { id: "d", text: "Goodbye everyone." },
-    ],
-  },
-];
+import { m1Questions, m2Questions } from "./data/questions.js";
+import {
+  getProfileByThemeStyle,
+  stylePriority,
+  themePriority,
+  voiceProfiles,
+} from "./data/personas.js";
 
 const speakingExperienceOptions = [
   "None",
@@ -280,74 +25,6 @@ const englishEnvironmentOptions = [
   "School English + Extra Practice",
   "Bilingual / International Curriculum Exposure",
   "English-Rich Daily Environment",
-];
-
-const voiceProfiles = [
-  {
-    id: "insight",
-    en: "The Insight Builder",
-    cn: "洞察建设者",
-    superpowerEn: "Deep Curiosity",
-    superpowerCn: "深度好奇",
-    image: "/personas/insight-builder.png",
-    description:
-      "You love discovering fresh perspectives and turning questions into understanding.",
-    descriptionCn: "你很容易被新的认知点点亮，并乐于把问题追问得更深。",
-    strength: "你很擅长从复杂信息里找到值得表达的洞察。",
-    growth: "下一步，是让你的观点更快进入重点，并更容易被听众记住。",
-  },
-  {
-    id: "storyteller",
-    en: "The Storyteller",
-    cn: "故事讲述者",
-    superpowerEn: "Human Connection",
-    superpowerCn: "共情连接",
-    image: "/personas/storyteller.png",
-    description:
-      "You notice people, emotions, and moments that make ideas feel real.",
-    descriptionCn: "你能敏锐感受到人、情绪与故事，让表达天然更有温度。",
-    strength: "你能够让别人愿意听下去，并自然产生共鸣。",
-    growth: "下一步，是让你的故事在线索和节奏上更有层次。",
-  },
-  {
-    id: "future",
-    en: "The Future Builder",
-    cn: "未来建设者",
-    superpowerEn: "Future Thinking",
-    superpowerCn: "未来思维",
-    image: "/personas/future-builder.png",
-    description:
-      "You are excited by new ideas and love turning possibilities into action.",
-    descriptionCn: "你总能看到新的可能性，并乐于把想法变成现实。",
-    strength: "你能够把灵感和想象自然延展成值得分享的方向。",
-    growth: "下一步，是学习如何让听众更快理解你想带他们去的未来。",
-  },
-  {
-    id: "advocate",
-    en: "The Advocate",
-    cn: "倡导者",
-    superpowerEn: "Purpose Voice",
-    superpowerCn: "立场表达",
-    image: "/personas/advocate.png",
-    description:
-      "You are drawn to meaningful issues and willing to speak up when something matters.",
-    descriptionCn: "你会被重要议题吸引，并愿意在真正重要的事情上发声。",
-    strength: "你有清晰的表达立场，也有推动讨论发生的勇气。",
-    growth: "下一步，是把你的观点组织成更完整、更能影响听众的表达。",
-  },
-  {
-    id: "catalyst",
-    en: "The Catalyst",
-    cn: "行动催化者",
-    superpowerEn: "Execution Energy",
-    superpowerCn: "行动推进",
-    image: "/personas/catalyst.png",
-    description:
-      "You naturally move from idea to execution and want change to actually happen.",
-    descriptionCn: "你会自然地把想法推向行动，并希望改变真的发生。",
-    strength: "你很擅长把表达和行动联系起来，让想法更有落地感。",
-    growth: "下一步，是让你的表达在感染力与说服力上再走一步。",
-  },
 ];
 
 const dimensionMeta = {
@@ -386,10 +63,10 @@ const defaultFormData = {
   testCode: "",
 };
 
-const AUTO_ADVANCE_DELAY_MS = 450;
+const AUTO_ADVANCE_DELAY_MS = 750;
 const STORAGE_KEY = "wapi-assessment-progress";
 const STORAGE_VERSION = 1;
-const QUESTION_SET_VERSION = "m1-20260709-m2-20260709-onboard-20260709";
+const QUESTION_SET_VERSION = "m1-theme-style-23-20260709-m2-20260709-onboard-20260709";
 const STORAGE_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 const validScreens = new Set(["register", "m1Intro", "m1Test", "m2Intro", "m2Test", "result"]);
 
@@ -410,10 +87,17 @@ function clampStep(value, maxStep) {
   return Number.isInteger(value) ? Math.max(0, Math.min(value, maxStep)) : 0;
 }
 
-function hasValidM1Answers(answers) {
-  return Array.isArray(answers) && answers.some((answerIndex, questionIndex) => (
-    Number.isInteger(answerIndex) && Boolean(m1Questions[questionIndex]?.options?.[answerIndex]?.persona)
-  ));
+function isValidM1Answer(answerIndex, questionIndex) {
+  const option = m1Questions[questionIndex]?.options?.[answerIndex];
+  return Number.isInteger(answerIndex) && Boolean(option?.themeTag || option?.styleTag);
+}
+
+function hasCompleteM1Answers(answers) {
+  return (
+    Array.isArray(answers) &&
+    answers.length === m1Questions.length &&
+    answers.every((answerIndex, questionIndex) => isValidM1Answer(answerIndex, questionIndex))
+  );
 }
 
 function getSavableFormData(formData) {
@@ -453,7 +137,7 @@ function readSavedProgress() {
     const m1Answers = normalizeAnswers(progress.m1Answers, m1Questions.length, 4);
     const m2Answers = normalizeAnswers(progress.m2Answers, m2Questions.length, 4);
     const screen = validScreens.has(progress.screen) ? progress.screen : "register";
-    const restoredScreen = screen === "result" && !hasValidM1Answers(m1Answers) ? "register" : screen;
+    const restoredScreen = screen === "result" && !hasCompleteM1Answers(m1Answers) ? "register" : screen;
 
     return {
       screen: restoredScreen,
@@ -764,6 +448,7 @@ function RatingStars({ name, value }) {
           size={16}
           fill={index < value ? "#f7df70" : "#f1eff4"}
           color={index < value ? "#f7df70" : "#f1eff4"}
+          style={{ "--star-index": index }}
         />
       ))}
     </span>
@@ -784,15 +469,15 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
 
           <div className="result-scroll">
             <div className="result-stack">
-              <div className="result-card identity-card t-stagger-line t-stagger-line--1">
+              <div className="result-card identity-card result-reveal-card t-stagger-line t-stagger-line--1">
                 <img src={profile.image} alt={profile.en} />
                 <div>
-                  <p className="small-muted">{learnerName}</p>
-                  <h2>{profile.cn}</h2>
-                  <p className="small-muted super-title">{profile.en}</p>
-                  <p className="small-muted super-title">Your Superpower</p>
-                  <strong>{profile.superpowerEn}</strong>
-                  <span>{profile.superpowerCn}</span>
+                  <p className="small-muted result-text-reveal">{learnerName}</p>
+                  <h2 className="result-text-reveal">{profile.cn}</h2>
+                  <p className="small-muted super-title result-text-reveal">{profile.en}</p>
+                  <p className="small-muted super-title result-text-reveal">Your Superpower</p>
+                  <strong className="result-text-reveal">{profile.superpowerEn}</strong>
+                  <span className="result-text-reveal">{profile.superpowerCn}</span>
                 </div>
               </div>
 
@@ -817,11 +502,11 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
                     </div>
                   ))}
                 </div>
-                <div className="result-note">
+                <div className="result-note" style={{ "--note-index": 0 }}>
                   <h3>Your Strength</h3>
                   <p>{profile.strength}</p>
                 </div>
-                <div className="result-note">
+                <div className="result-note" style={{ "--note-index": 1 }}>
                   <h3>Your Next Growth Opportunity</h3>
                   <p>{profile.growth}</p>
                 </div>
@@ -841,37 +526,31 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
   );
 }
 
+function selectTopTag(counts, priority) {
+  const peak = Math.max(...Object.values(counts));
+  if (peak === 0) return null;
+  return priority.find((tag) => counts[tag] === peak) ?? null;
+}
+
 function getDominantProfile(answers) {
-  const counts = Object.fromEntries(voiceProfiles.map((profile) => [profile.id, 0]));
+  const themeCounts = Object.fromEntries(themePriority.map((tag) => [tag, 0]));
+  const styleCounts = Object.fromEntries(stylePriority.map((tag) => [tag, 0]));
 
   answers.forEach((answerIndex, questionIndex) => {
-    const persona = m1Questions[questionIndex]?.options?.[answerIndex]?.persona;
-    if (persona && persona in counts) {
-      counts[persona] += 1;
+    const option = m1Questions[questionIndex]?.options?.[answerIndex];
+    if (option?.themeTag && option.themeTag in themeCounts) {
+      themeCounts[option.themeTag] += 1;
+    }
+    if (option?.styleTag && option.styleTag in styleCounts) {
+      styleCounts[option.styleTag] += 1;
     }
   });
 
-  const peak = Math.max(...Object.values(counts));
-  if (peak === 0) return null;
+  const theme = selectTopTag(themeCounts, themePriority);
+  const style = selectTopTag(styleCounts, stylePriority);
+  if (!theme || !style) return null;
 
-  const tiedPersonas = new Set(
-    Object.entries(counts)
-      .filter(([, count]) => count === peak)
-      .map(([persona]) => persona),
-  );
-
-  for (let questionIndex = answers.length - 1; questionIndex >= 0; questionIndex -= 1) {
-    const answerIndex = answers[questionIndex];
-    const persona = m1Questions[questionIndex]?.options?.[answerIndex]?.persona;
-    if (tiedPersonas.has(persona)) {
-      return voiceProfiles.find((profile) => profile.id === persona);
-    }
-  }
-
-  return (
-    voiceProfiles.find((profile) => tiedPersonas.has(profile.id)) ||
-    voiceProfiles[2]
-  );
+  return getProfileByThemeStyle(theme, style);
 }
 
 function buildDynamicDimensions(m2Answers) {
@@ -909,30 +588,63 @@ function buildDynamicDimensions(m2Answers) {
   };
   const confidence = correctCount / m2Questions.length;
 
-  const dimensions = dimensionOrder.map((key) => {
+  const details = dimensionOrder.map((key) => {
     const ratio = totals[key] ? correct[key] / totals[key] : 0;
-    return [
-      dimensionMeta[key][0],
-      dimensionMeta[key][1],
-      scoreFromRatio(ratio),
-    ];
+    return {
+      key,
+      name: dimensionMeta[key][0],
+      cn: dimensionMeta[key][1],
+      correct: correct[key],
+      total: totals[key],
+      ratio,
+      stars: scoreFromRatio(ratio),
+    };
   });
 
-  return { dimensions, confidence };
+  return {
+    details,
+    dimensions: details.map((detail) => [detail.name, detail.cn, detail.stars]),
+    confidence,
+  };
+}
+
+const strengthPriority = ["communication", "language", "logic", "impact"];
+const growthPriority = ["impact", "logic", "language", "communication"];
+
+function compareStrengthDimensions(a, b) {
+  if (b.stars !== a.stars) return b.stars - a.stars;
+  if (b.ratio !== a.ratio) return b.ratio - a.ratio;
+  return strengthPriority.indexOf(a.key) - strengthPriority.indexOf(b.key);
+}
+
+function compareGrowthDimensions(a, b) {
+  if (a.stars !== b.stars) return a.stars - b.stars;
+  if (a.ratio !== b.ratio) return a.ratio - b.ratio;
+  return growthPriority.indexOf(a.key) - growthPriority.indexOf(b.key);
+}
+
+function areAllDimensionsTied(details) {
+  return details.every((detail) => (
+    detail.stars === details[0].stars && detail.ratio === details[0].ratio
+  ));
 }
 
 function buildResultProfile(m1Answers, m2Answers) {
   const baseProfile = getDominantProfile(m1Answers);
-  const profileForResult = baseProfile ?? voiceProfiles[2];
-  const { dimensions: dynamicDimensions, confidence } = buildDynamicDimensions(m2Answers);
-  const strongestDimension = [...dynamicDimensions].sort((a, b) => {
-    if (b[2] !== a[2]) return b[2] - a[2];
-    return dynamicDimensions.indexOf(a) - dynamicDimensions.indexOf(b);
-  })[0];
-  const growthDimension = [...dynamicDimensions].sort((a, b) => {
-    if (a[2] !== b[2]) return a[2] - b[2];
-    return dynamicDimensions.indexOf(a) - dynamicDimensions.indexOf(b);
-  })[0];
+  const profileForResult =
+    baseProfile ?? voiceProfiles.find((profile) => profile.id === "future-builder") ?? voiceProfiles[0];
+  const { dimensions: dynamicDimensions, details: dimensionDetails, confidence } = buildDynamicDimensions(m2Answers);
+  const isFullTie = areAllDimensionsTied(dimensionDetails);
+  const strongestDimension = [...dimensionDetails].sort(compareStrengthDimensions)[0];
+  const growthDimension = [...dimensionDetails]
+    .filter((detail) => detail.key !== strongestDimension.key)
+    .sort(compareGrowthDimensions)[0];
+  const strengthText = isFullTie
+    ? profileForResult.strength
+    : dimensionFeedback[strongestDimension.name].strength;
+  const growthText = isFullTie
+    ? dimensionFeedback[dimensionMeta.impact[0]].growth
+    : dimensionFeedback[growthDimension.name].growth;
   const confidenceLine = confidence >= 0.75
     ? "You answered with strong consistency and showed solid confidence across the expression test."
     : "Your answers show clear potential, with room to build more confidence through the expression test.";
@@ -945,8 +657,8 @@ function buildResultProfile(m1Answers, m2Answers) {
     description: `${profileForResult.description} ${confidenceLine}`,
     descriptionCn: `${profileForResult.descriptionCn}${confidenceLineCn}`,
     dimensions: dynamicDimensions,
-    strength: dimensionFeedback[strongestDimension[0]].strength,
-    growth: dimensionFeedback[growthDimension[0]].growth,
+    strength: strengthText,
+    growth: growthText,
   };
 }
 
@@ -1071,7 +783,7 @@ export function App() {
     clearAdvanceTimer();
     setIsTransitioning(false);
     if (m2Step >= m2Questions.length - 1) {
-      if (!hasValidM1Answers(m1Answers)) {
+      if (!hasCompleteM1Answers(m1Answers)) {
         setScreen("m1Test");
         return;
       }
