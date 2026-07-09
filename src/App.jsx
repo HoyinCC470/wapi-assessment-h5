@@ -269,11 +269,17 @@ const m2Questions = [
   },
 ];
 
-const backgroundOptions = [
-  "Mainly school English",
-  "International School / Bilingual School",
-  "English Training Programs",
-  "Native / Near Native",
+const speakingExperienceOptions = [
+  "None",
+  "1-3",
+  "4+",
+];
+
+const englishEnvironmentOptions = [
+  "Regular School English Only",
+  "School English + Extra Practice",
+  "Bilingual / International Curriculum Exposure",
+  "English-Rich Daily Environment",
 ];
 
 const voiceProfiles = [
@@ -373,16 +379,18 @@ const dimensionFeedback = {
 };
 
 const defaultFormData = {
-  name: "Jack",
-  age: "8",
-  speakingExperience: "One",
-  background: backgroundOptions[1],
+  name: "",
+  age: "",
+  speakingExperience: "",
+  background: "",
   testCode: "",
 };
 
 const AUTO_ADVANCE_DELAY_MS = 450;
 const STORAGE_KEY = "wapi-assessment-progress";
 const STORAGE_VERSION = 1;
+const QUESTION_SET_VERSION = "m1-20260709-m2-20260709-onboard-20260709";
+const STORAGE_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 const validScreens = new Set(["register", "m1Intro", "m1Test", "m2Intro", "m2Test", "result"]);
 
 function createEmptyAnswers(length) {
@@ -402,6 +410,32 @@ function clampStep(value, maxStep) {
   return Number.isInteger(value) ? Math.max(0, Math.min(value, maxStep)) : 0;
 }
 
+function hasValidM1Answers(answers) {
+  return Array.isArray(answers) && answers.some((answerIndex, questionIndex) => (
+    Number.isInteger(answerIndex) && Boolean(m1Questions[questionIndex]?.options?.[answerIndex]?.persona)
+  ));
+}
+
+function getSavableFormData(formData) {
+  const savableFormData = { ...formData };
+  delete savableFormData.testCode;
+  return savableFormData;
+}
+
+function normalizeFormData(value) {
+  const source = value && typeof value === "object" ? value : {};
+
+  return {
+    ...defaultFormData,
+    ...source,
+    speakingExperience: speakingExperienceOptions.includes(source.speakingExperience)
+      ? source.speakingExperience
+      : "",
+    background: englishEnvironmentOptions.includes(source.background) ? source.background : "",
+    testCode: "",
+  };
+}
+
 function readSavedProgress() {
   if (typeof window === "undefined") return null;
 
@@ -411,17 +445,23 @@ function readSavedProgress() {
 
     const progress = JSON.parse(rawProgress);
     if (progress?.version !== STORAGE_VERSION) return null;
+    if (progress?.questionSetVersion !== QUESTION_SET_VERSION) return null;
+
+    const savedAt = Date.parse(progress.savedAt);
+    if (!Number.isFinite(savedAt) || Date.now() - savedAt > STORAGE_TTL_MS) return null;
+
+    const m1Answers = normalizeAnswers(progress.m1Answers, m1Questions.length, 4);
+    const m2Answers = normalizeAnswers(progress.m2Answers, m2Questions.length, 4);
+    const screen = validScreens.has(progress.screen) ? progress.screen : "register";
+    const restoredScreen = screen === "result" && !hasValidM1Answers(m1Answers) ? "register" : screen;
 
     return {
-      screen: validScreens.has(progress.screen) ? progress.screen : "register",
-      formData: {
-        ...defaultFormData,
-        ...(progress.formData && typeof progress.formData === "object" ? progress.formData : {}),
-      },
+      screen: restoredScreen,
+      formData: normalizeFormData(progress.formData),
       m1Step: clampStep(progress.m1Step, m1Questions.length - 1),
       m2Step: clampStep(progress.m2Step, m2Questions.length - 1),
-      m1Answers: normalizeAnswers(progress.m1Answers, m1Questions.length, 4),
-      m2Answers: normalizeAnswers(progress.m2Answers, m2Questions.length, 4),
+      m1Answers,
+      m2Answers,
     };
   } catch {
     return null;
@@ -434,8 +474,10 @@ function writeSavedProgress(progress) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
       version: STORAGE_VERSION,
+      questionSetVersion: QUESTION_SET_VERSION,
       savedAt: new Date().toISOString(),
       ...progress,
+      formData: getSavableFormData(progress.formData ?? defaultFormData),
     }));
   } catch {
     // Storage can fail in private mode or when browser quota is full.
@@ -479,10 +521,31 @@ function BackButton({ onClick, className = "" }) {
 
 function Register({ formData, onChange, onNext }) {
   const revealClassName = useStaggerReveal("register");
+  const [formError, setFormError] = useState("");
+
+  const requiredFields = [
+    ["name", "Your Name"],
+    ["age", "Your Age"],
+    ["speakingExperience", "Your Public Speaking Experience"],
+    ["background", "English Learning Environment"],
+    ["testCode", "Test Code"],
+  ];
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const missingField = requiredFields.find(([field]) => !String(formData[field] ?? "").trim());
+    if (missingField) {
+      setFormError(`Please complete ${missingField[1]} before continuing.`);
+      return;
+    }
+
+    setFormError("");
     onNext();
+  };
+
+  const handleChange = (field, value) => {
+    if (formError) setFormError("");
+    onChange(field, value);
   };
 
   return (
@@ -496,39 +559,53 @@ function Register({ formData, onChange, onNext }) {
               <span>Your Name</span>
               <input
                 value={formData.name}
-                onChange={(event) => onChange("name", event.target.value)}
+                onChange={(event) => handleChange("name", event.target.value)}
               />
             </label>
             <label className="floating-field">
               <span>Your Age</span>
               <input
                 value={formData.age}
-                onChange={(event) => onChange("age", event.target.value)}
+                onChange={(event) => handleChange("age", event.target.value)}
               />
             </label>
           </div>
 
-          <label className="floating-field wide">
-            <span>Your Speaking Experience</span>
-            <input
-              value={formData.speakingExperience}
-              onChange={(event) => onChange("speakingExperience", event.target.value)}
-            />
-          </label>
+          <fieldset className="radio-group speaking-group">
+            <legend>Your Public Speaking Experience</legend>
+            <div className="radio-options speaking-options">
+              {speakingExperienceOptions.map((item) => (
+                <label className={`radio-row ${formData.speakingExperience === item ? "selected" : ""}`} key={item}>
+                  <input
+                    type="radio"
+                    name="speakingExperience"
+                    checked={formData.speakingExperience === item}
+                    onChange={() => handleChange("speakingExperience", item)}
+                  />
+                  <span>{item}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
           <fieldset className="radio-group">
-            <legend>English Learning Background</legend>
-            {backgroundOptions.map((item) => (
-              <label className={`radio-row ${formData.background === item ? "selected" : ""}`} key={item}>
-                <input
-                  type="radio"
-                  name="background"
-                  checked={formData.background === item}
-                  onChange={() => onChange("background", item)}
-                />
-                <span>{item}</span>
-              </label>
-            ))}
+            <legend>English Learning Environment</legend>
+            <p className="radio-group-description">
+              Choose the option that best describes your main English learning environment in the past 12 months.
+            </p>
+            <div className="radio-options">
+              {englishEnvironmentOptions.map((item) => (
+                <label className={`radio-row ${formData.background === item ? "selected" : ""}`} key={item}>
+                  <input
+                    type="radio"
+                    name="background"
+                    checked={formData.background === item}
+                    onChange={() => handleChange("background", item)}
+                  />
+                  <span>{item}</span>
+                </label>
+              ))}
+            </div>
           </fieldset>
 
           <label className="floating-field wide test-code-field">
@@ -536,10 +613,11 @@ function Register({ formData, onChange, onNext }) {
             <input
               placeholder="Enter test code"
               value={formData.testCode}
-              onChange={(event) => onChange("testCode", event.target.value)}
+              onChange={(event) => handleChange("testCode", event.target.value)}
             />
           </label>
 
+          {formError ? <p className="form-error" role="alert">{formError}</p> : null}
           <button className="black-cta" type="submit">Login</button>
         </form>
       </section>
@@ -774,7 +852,7 @@ function getDominantProfile(answers) {
   });
 
   const peak = Math.max(...Object.values(counts));
-  if (peak === 0) return voiceProfiles.find((profile) => profile.id === "future");
+  if (peak === 0) return null;
 
   const tiedPersonas = new Set(
     Object.entries(counts)
@@ -845,6 +923,7 @@ function buildDynamicDimensions(m2Answers) {
 
 function buildResultProfile(m1Answers, m2Answers) {
   const baseProfile = getDominantProfile(m1Answers);
+  const profileForResult = baseProfile ?? voiceProfiles[2];
   const { dimensions: dynamicDimensions, confidence } = buildDynamicDimensions(m2Answers);
   const strongestDimension = [...dynamicDimensions].sort((a, b) => {
     if (b[2] !== a[2]) return b[2] - a[2];
@@ -862,9 +941,9 @@ function buildResultProfile(m1Answers, m2Answers) {
     : "你已经有不错的表达潜力，接下来更需要通过表达能力测试和练习建立稳定自信。";
 
   return {
-    ...baseProfile,
-    description: `${baseProfile.description} ${confidenceLine}`,
-    descriptionCn: `${baseProfile.descriptionCn}${confidenceLineCn}`,
+    ...profileForResult,
+    description: `${profileForResult.description} ${confidenceLine}`,
+    descriptionCn: `${profileForResult.descriptionCn}${confidenceLineCn}`,
     dimensions: dynamicDimensions,
     strength: dimensionFeedback[strongestDimension[0]].strength,
     growth: dimensionFeedback[growthDimension[0]].growth,
@@ -992,6 +1071,10 @@ export function App() {
     clearAdvanceTimer();
     setIsTransitioning(false);
     if (m2Step >= m2Questions.length - 1) {
+      if (!hasValidM1Answers(m1Answers)) {
+        setScreen("m1Test");
+        return;
+      }
       setScreen("result");
     } else {
       setM2Step((value) => value + 1);
@@ -1031,8 +1114,8 @@ export function App() {
     "",
     `Learner: ${learnerName}`,
     `Age: ${formData.age || "-"}`,
-    `Speaking Experience: ${formData.speakingExperience || "-"}`,
-    `English Background: ${formData.background || "-"}`,
+    `Public Speaking Experience: ${formData.speakingExperience || "-"}`,
+    `English Learning Environment: ${formData.background || "-"}`,
     `Test Code: ${formData.testCode || "-"}`,
     "",
     `Voice Identity: ${resultProfile.en} / ${resultProfile.cn}`,
