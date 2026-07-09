@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   ChevronRight,
   Circle,
+  Languages,
   SlidersHorizontal,
   Star,
 } from "lucide-react";
@@ -493,12 +494,14 @@ function Result({ profile, onBack, onDownloadReport, onShareIdentity, onRestart,
                 <button
                   className="translation-toggle"
                   type="button"
+                  aria-label={isDescriptionChinese ? "Show English description" : "Show Chinese translation"}
+                  title={isDescriptionChinese ? "Show English" : "中文翻译"}
                   onClick={() => setDescriptionState({
                     profileId: profile.id,
                     language: isDescriptionChinese ? "en" : "cn",
                   })}
                 >
-                  {isDescriptionChinese ? "Show English" : "中文翻译"}
+                  <Languages size={17} aria-hidden="true" />
                 </button>
               </div>
 
