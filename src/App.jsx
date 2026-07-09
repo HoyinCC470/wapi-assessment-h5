@@ -455,8 +455,11 @@ function RatingStars({ name, value }) {
   );
 }
 
-function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentity, onRestart, statusMessage }) {
+function Result({ profile, onBack, onDownloadReport, onShareIdentity, onRestart, statusMessage }) {
   const revealClassName = useStaggerReveal(profile.en);
+  const [descriptionState, setDescriptionState] = useState({ profileId: profile.id, language: "en" });
+  const descriptionLanguage = descriptionState.profileId === profile.id ? descriptionState.language : "en";
+  const isDescriptionChinese = descriptionLanguage === "cn";
 
   return (
     <PhoneShell wideDesktop>
@@ -473,21 +476,31 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
                 <img src={profile.image} alt={profile.en} />
                 <div className="identity-copy">
                   <p className="identity-eyebrow result-text-reveal">Your Voice Identity</p>
-                  <p className="small-muted learner-name result-text-reveal">{learnerName}</p>
                   <h2 className="result-text-reveal">{profile.cn}</h2>
                   <p className="identity-en result-text-reveal">{profile.en}</p>
                   <div className="superpower-title result-text-reveal">
                     <span>Your Superpower</span>
-                    <strong>{profile.superpowerEn}</strong>
                     <em>{profile.superpowerCn}</em>
+                    <strong>{profile.superpowerEn}</strong>
                   </div>
                 </div>
               </div>
 
-              <p className="description-card t-stagger-line t-stagger-line--2">
-                {profile.description}<br />
-                {profile.descriptionCn}
-              </p>
+              <div className={`description-card theme-${profile.theme} t-stagger-line t-stagger-line--2`}>
+                <p className="description-text" key={descriptionLanguage}>
+                  {isDescriptionChinese ? profile.descriptionCn : profile.description}
+                </p>
+                <button
+                  className="translation-toggle"
+                  type="button"
+                  onClick={() => setDescriptionState({
+                    profileId: profile.id,
+                    language: isDescriptionChinese ? "en" : "cn",
+                  })}
+                >
+                  {isDescriptionChinese ? "Show English" : "中文翻译"}
+                </button>
+              </div>
 
               <div className="result-card profile-card t-stagger-line t-stagger-line--3">
                 <div className="profile-heading">

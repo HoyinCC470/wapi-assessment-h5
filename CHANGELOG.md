@@ -8,6 +8,7 @@
 - Add Motion Lite refinements for page entry, module intros, answer selection feedback, and result reveal while respecting reduced-motion settings
 - Fix iOS Safari viewport handling so pages use natural document scrolling and avoid bottom toolbar color/scroll conflicts
 - Shorten answer auto-advance delay and strengthen result identity card hierarchy with theme-colored accents
+- Simplify result identity copy, remove learner name from the hero card, and add animated English/Chinese translation toggle for the result description
 
 ## 0.1.3 - 2026-07-08
 
