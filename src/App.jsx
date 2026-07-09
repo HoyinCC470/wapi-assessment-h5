@@ -196,14 +196,6 @@ function PhoneShell({ children, tone = "white", wideDesktop = false }) {
   );
 }
 
-function BackButton({ onClick, className = "" }) {
-  return (
-    <button className={`back-button ${className}`.trim()} onClick={onClick} aria-label="Back">
-      <ArrowLeft size={17} />
-    </button>
-  );
-}
-
 function Register({ formData, onChange, onNext }) {
   const revealClassName = useStaggerReveal("register");
   const [formError, setFormError] = useState("");
@@ -456,7 +448,7 @@ function RatingStars({ name, value }) {
   );
 }
 
-function Result({ profile, onBack, onDownloadReport, onShareIdentity, onRestart, statusMessage }) {
+function Result({ profile, onDownloadReport, onShareIdentity, onRestart, statusMessage }) {
   const revealClassName = useStaggerReveal(profile.en);
   const [descriptionState, setDescriptionState] = useState({ profileId: profile.id, language: "en" });
   const descriptionLanguage = descriptionState.profileId === profile.id ? descriptionState.language : "en";
@@ -467,8 +459,7 @@ function Result({ profile, onBack, onDownloadReport, onShareIdentity, onRestart,
       <section className="result-page screen-reveal">
         <div className={`result-content ${revealClassName}`}>
           <div className="result-top">
-            <BackButton onClick={onBack} className="result-back-button" />
-            <h1 className="result-title">Result: Voice Identity</h1>
+            <img className="result-brand-logo" src="/wapi-logo-wide.png" alt="WAPI" />
           </div>
 
           <div className="result-scroll">

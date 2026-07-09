@@ -12,6 +12,7 @@
 - Replace result description translation text button with an icon control and ensure description cards inherit the active identity theme color
 - Soften result card shadows and reduce the description translation icon button size
 - Further reduce result card shadow spread and theme shadow opacity for a cleaner mobile look
+- Replace the result page navigation header with the WAPI wide brand logo
 
 ## 0.1.3 - 2026-07-08
 

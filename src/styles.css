@@ -1021,20 +1021,21 @@ button {
 .result-top {
   width: 100%;
   position: relative;
-  min-height: 56px;
+  min-height: 42px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex: 0 0 auto;
-  margin-bottom: 18px;
+  margin-bottom: 24px;
 }
 
-.result-back-button {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 56px;
-  height: 56px;
+.result-brand-logo {
+  display: flex;
+  align-items: center;
+  width: min(220px, 58vw);
+  height: auto;
+  margin: 0;
+  animation: result-text-reveal var(--duration-medium) var(--ease-smooth-out) both;
 }
 
 .result-stack {
@@ -1048,19 +1049,6 @@ button {
   min-height: auto;
   overflow: visible;
   padding: 4px 0 20px;
-}
-
-.result-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 56px;
-  margin: 0;
-  color: #29282e;
-  font-size: 16px;
-  font-weight: 600;
-  white-space: nowrap;
-  animation: result-text-reveal var(--duration-medium) var(--ease-smooth-out) both;
 }
 
 .result-card {
@@ -1757,18 +1745,12 @@ button {
 
   .result-top {
     width: min(100%, 820px);
-    min-height: 64px;
-    margin: 0 auto 24px;
+    min-height: 50px;
+    margin: 0 auto 28px;
   }
 
-  .result-back-button {
-    width: 64px;
-    height: 64px;
-  }
-
-  .result-title {
-    min-height: 64px;
-    font-size: 18px;
+  .result-brand-logo {
+    width: min(260px, 28vw);
   }
 
   .result-stack {
