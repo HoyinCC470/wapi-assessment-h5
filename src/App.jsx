@@ -63,7 +63,7 @@ const defaultFormData = {
   testCode: "",
 };
 
-const AUTO_ADVANCE_DELAY_MS = 750;
+const AUTO_ADVANCE_DELAY_MS = 600;
 const STORAGE_KEY = "wapi-assessment-progress";
 const STORAGE_VERSION = 1;
 const QUESTION_SET_VERSION = "m1-theme-style-23-20260709-m2-20260709-onboard-20260709";
@@ -469,15 +469,18 @@ function Result({ profile, learnerName, onBack, onDownloadReport, onShareIdentit
 
           <div className="result-scroll">
             <div className="result-stack">
-              <div className="result-card identity-card result-reveal-card t-stagger-line t-stagger-line--1">
+              <div className={`result-card identity-card result-reveal-card theme-${profile.theme} t-stagger-line t-stagger-line--1`}>
                 <img src={profile.image} alt={profile.en} />
-                <div>
-                  <p className="small-muted result-text-reveal">{learnerName}</p>
+                <div className="identity-copy">
+                  <p className="identity-eyebrow result-text-reveal">Your Voice Identity</p>
+                  <p className="small-muted learner-name result-text-reveal">{learnerName}</p>
                   <h2 className="result-text-reveal">{profile.cn}</h2>
-                  <p className="small-muted super-title result-text-reveal">{profile.en}</p>
-                  <p className="small-muted super-title result-text-reveal">Your Superpower</p>
-                  <strong className="result-text-reveal">{profile.superpowerEn}</strong>
-                  <span className="result-text-reveal">{profile.superpowerCn}</span>
+                  <p className="identity-en result-text-reveal">{profile.en}</p>
+                  <div className="superpower-title result-text-reveal">
+                    <span>Your Superpower</span>
+                    <strong>{profile.superpowerEn}</strong>
+                    <em>{profile.superpowerCn}</em>
+                  </div>
                 </div>
               </div>
 

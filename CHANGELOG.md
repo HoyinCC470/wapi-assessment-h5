@@ -7,6 +7,7 @@
 - Enlarge result identity artwork inside the result card without changing the page flow
 - Add Motion Lite refinements for page entry, module intros, answer selection feedback, and result reveal while respecting reduced-motion settings
 - Fix iOS Safari viewport handling so pages use natural document scrolling and avoid bottom toolbar color/scroll conflicts
+- Shorten answer auto-advance delay and strengthen result identity card hierarchy with theme-colored accents
 
 ## 0.1.3 - 2026-07-08
 
