@@ -231,10 +231,10 @@ async function generateReportImageBlob(profile, descriptionLanguage) {
   const description = descriptionLanguage === "cn" ? profile.descriptionCn : profile.description;
 
   canvas.width = width * scale;
-  canvas.height = 1580 * scale;
+  canvas.height = 1900 * scale;
   ctx.scale(scale, scale);
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, width, 1580);
+  ctx.fillRect(0, 0, width, 1900);
   ctx.textBaseline = "top";
 
   let y = 28;
@@ -279,7 +279,17 @@ async function generateReportImageBlob(profile, descriptionLanguage) {
   drawWrappedText(ctx, description, padding + 28, y + 22, cardWidth - 56, 34, 5);
   y += descriptionHeight + 30;
 
-  drawCard(ctx, padding, y, cardWidth, 500, 24, "#ffffff", "rgba(34, 60, 110, 0.055)");
+  const profileCardY = y;
+  const noteX = padding + 24;
+  const noteWidth = cardWidth - 48;
+  ctx.font = "400 22px -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif";
+  const strengthLines = wrapText(ctx, profile.strength, noteWidth - 48).slice(0, 3);
+  const growthLines = wrapText(ctx, profile.growth, noteWidth - 48).slice(0, 4);
+  const strengthNoteHeight = Math.max(122, 70 + strengthLines.length * 30 + 24);
+  const growthNoteHeight = Math.max(138, 70 + growthLines.length * 30 + 24);
+  const profileCardHeight = 132 + 48 * profile.dimensions.length + 10 + strengthNoteHeight + 28 + growthNoteHeight + 28;
+
+  drawCard(ctx, padding, profileCardY, cardWidth, profileCardHeight, 24, "#ffffff", "rgba(34, 60, 110, 0.055)");
   fillRoundedRect(ctx, padding + 24, y + 24, 58, 58, 29, theme.soft);
   drawSliderIcon(ctx, padding + 53, y + 53, theme.color);
   ctx.fillStyle = "#2b2a31";
@@ -298,23 +308,25 @@ async function generateReportImageBlob(profile, descriptionLanguage) {
     rowY += 48;
   });
 
-  const noteX = padding + 24;
-  const noteWidth = cardWidth - 48;
-  fillRoundedRect(ctx, noteX, rowY + 10, noteWidth, 122, 20, theme.soft);
+  fillRoundedRect(ctx, noteX, rowY + 10, noteWidth, strengthNoteHeight, 20, theme.soft);
   ctx.fillStyle = "#383640";
   ctx.font = "600 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
   ctx.fillText("Your Strength", noteX + 24, rowY + 31);
   ctx.font = "400 22px -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif";
-  drawWrappedText(ctx, profile.strength, noteX + 24, rowY + 70, noteWidth - 48, 30, 2);
+  strengthLines.forEach((line, index) => {
+    ctx.fillText(line, noteX + 24, rowY + 70 + index * 30);
+  });
 
-  rowY += 150;
-  fillRoundedRect(ctx, noteX, rowY + 10, noteWidth, 138, 20, theme.soft);
+  rowY += strengthNoteHeight + 28;
+  fillRoundedRect(ctx, noteX, rowY + 10, noteWidth, growthNoteHeight, 20, theme.soft);
   ctx.fillStyle = "#383640";
   ctx.font = "600 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
   ctx.fillText("Your Next Growth Opportunity", noteX + 24, rowY + 31);
   ctx.font = "400 22px -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif";
-  drawWrappedText(ctx, profile.growth, noteX + 24, rowY + 70, noteWidth - 48, 30, 3);
-  y += 540;
+  growthLines.forEach((line, index) => {
+    ctx.fillText(line, noteX + 24, rowY + 70 + index * 30);
+  });
+  y = profileCardY + profileCardHeight + 26;
 
   ctx.textAlign = "center";
   ctx.fillStyle = "#9b99a6";

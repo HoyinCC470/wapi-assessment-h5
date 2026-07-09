@@ -16,6 +16,7 @@
 - Apply the active identity theme color to the expression profile icon, subtitle, and insight panels
 - Replace separate result report/share actions with one themed `Share My Report` CTA
 - Replace DOM screenshot sharing with a generated report image preview for more reliable mobile saving
+- Expand generated report image height dynamically so growth notes and footer are not clipped
 
 ## 0.1.3 - 2026-07-08
 
