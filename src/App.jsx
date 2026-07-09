@@ -501,7 +501,7 @@ function Result({ profile, onBack, onDownloadReport, onShareIdentity, onRestart,
                     language: isDescriptionChinese ? "en" : "cn",
                   })}
                 >
-                  <Languages size={17} aria-hidden="true" />
+                  <Languages size={14} aria-hidden="true" />
                 </button>
               </div>
 
