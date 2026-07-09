@@ -1,6 +1,12 @@
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: #fff;
+}
+
 :root {
   color: #19191f;
-  background: #eef4ff;
+  background: #fff;
   font-family: "PingFang SC", "Inter", "Helvetica Neue", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   --black: #1b1b21;
@@ -64,10 +70,14 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100dvh;
+  background: #fff;
 }
 
 #root {
   min-height: 100vh;
+  min-height: 100dvh;
+  background: inherit;
 }
 
 button,
@@ -324,7 +334,8 @@ button {
   position: relative;
   width: 100%;
   max-width: 100%;
-  min-height: 100svh;
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
   overflow-x: hidden;
   background: #fff;
@@ -376,10 +387,10 @@ button {
 
 /* Register */
 .register-page {
-  min-height: 100svh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: clamp(28px, 6svh, 48px) 16px clamp(18px, 4svh, 28px);
+  padding: clamp(18px, 4dvh, 34px) 16px calc(clamp(96px, 14dvh, 132px) + env(safe-area-inset-bottom, 0px));
   text-align: center;
 }
 
@@ -587,8 +598,8 @@ button {
 
 /* Intro */
 .intro-page {
-  min-height: 100svh;
-  padding: clamp(28px, 6svh, 48px) 16px clamp(28px, 5svh, 40px);
+  min-height: 100dvh;
+  padding: clamp(20px, 5dvh, 42px) 16px calc(clamp(96px, 14dvh, 132px) + env(safe-area-inset-bottom, 0px));
 }
 
 .intro-content {
@@ -597,7 +608,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: calc(100svh - clamp(56px, 11svh, 88px));
+  min-height: auto;
   text-align: center;
 }
 
@@ -683,8 +694,8 @@ button {
 
 /* Test */
 .test-page {
-  min-height: 100svh;
-  padding: clamp(28px, 6svh, 48px) 16px clamp(28px, 5svh, 40px);
+  min-height: 100dvh;
+  padding: clamp(20px, 5dvh, 42px) 16px calc(clamp(96px, 14dvh, 132px) + env(safe-area-inset-bottom, 0px));
 }
 
 .test-content {
@@ -692,7 +703,7 @@ button {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  min-height: calc(100svh - clamp(56px, 11svh, 88px));
+  min-height: auto;
   gap: 0;
 }
 
@@ -980,16 +991,16 @@ button {
 
 /* Result */
 .result-page {
-  height: 100svh;
-  padding: clamp(20px, 4svh, 28px) 16px calc(16px + env(safe-area-inset-bottom, 0px));
-  overflow: hidden;
+  min-height: 100dvh;
+  padding: clamp(20px, 4dvh, 28px) 16px calc(clamp(96px, 14dvh, 132px) + env(safe-area-inset-bottom, 0px));
+  overflow: visible;
+  background: #fff;
 }
 
 .result-content {
   width: min(100%, 375px);
   margin: 0 auto;
-  height: 100%;
-  min-height: 0;
+  min-height: auto;
   display: flex;
   flex-direction: column;
 }
@@ -1020,9 +1031,9 @@ button {
 }
 
 .result-scroll {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
+  flex: 0 0 auto;
+  min-height: auto;
+  overflow: visible;
   padding: 4px 0 20px;
 }
 
@@ -1264,8 +1275,8 @@ button {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   padding-top: 12px;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 18%);
+  padding-bottom: 0;
+  background: transparent;
 }
 
 .result-actions.t-stagger-line {
@@ -1401,14 +1412,14 @@ button {
   .phone-shell.wide-desktop {
     width: 100%;
     max-width: none;
-    min-height: 100svh;
+    min-height: 100dvh;
     box-shadow: none;
   }
 
   .phone-shell.blue {
     width: 100%;
     max-width: none;
-    min-height: 100svh;
+    min-height: 100dvh;
     box-shadow: none;
   }
 
@@ -1418,7 +1429,7 @@ button {
     align-items: center;
     width: 100%;
     margin: 0 auto;
-    padding: clamp(40px, 7svh, 72px) clamp(32px, 6vw, 72px);
+    padding: clamp(40px, 7dvh, 72px) clamp(32px, 6vw, 72px);
     text-align: center;
   }
 
@@ -1484,12 +1495,12 @@ button {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: clamp(40px, 7svh, 72px) clamp(32px, 6vw, 72px);
+    padding: clamp(40px, 7dvh, 72px) clamp(32px, 6vw, 72px);
   }
 
   .intro-content {
     width: min(100%, 680px);
-    min-height: calc(100svh - clamp(80px, 14svh, 128px));
+    min-height: auto;
   }
 
   .stage-progress {
@@ -1516,12 +1527,12 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: clamp(40px, 7svh, 72px) clamp(32px, 6vw, 72px);
+    padding: clamp(40px, 7dvh, 72px) clamp(32px, 6vw, 72px);
   }
 
   .test-content {
     width: min(100%, 820px);
-    min-height: calc(100svh - clamp(80px, 14svh, 128px));
+    min-height: auto;
   }
 
   .test-top {
@@ -1586,13 +1597,14 @@ button {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    height: 100svh;
-    padding: clamp(28px, 4svh, 40px) clamp(32px, 6vw, 72px) 24px;
+    min-height: 100dvh;
+    height: auto;
+    padding: clamp(28px, 4dvh, 40px) clamp(32px, 6vw, 72px) clamp(56px, 8dvh, 88px);
   }
 
   .result-content {
     width: min(100%, 980px);
-    height: calc(100svh - 24px);
+    height: auto;
   }
 
   .result-top {

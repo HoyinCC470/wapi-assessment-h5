@@ -6,6 +6,7 @@
 - Slow answer auto-advance slightly so selected-state feedback is visible on real devices
 - Enlarge result identity artwork inside the result card without changing the page flow
 - Add Motion Lite refinements for page entry, module intros, answer selection feedback, and result reveal while respecting reduced-motion settings
+- Fix iOS Safari viewport handling so pages use natural document scrolling and avoid bottom toolbar color/scroll conflicts
 
 ## 0.1.3 - 2026-07-08
 
