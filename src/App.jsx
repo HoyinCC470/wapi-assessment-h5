@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
+  CheckCircle,
   ChevronRight,
   Circle,
   Languages,
   SlidersHorizontal,
   Star,
+  X,
 } from "lucide-react";
 import { m1Questions, m2Questions } from "./data/questions.js";
 import {
@@ -716,12 +718,13 @@ function RatingStars({ name, value }) {
   );
 }
 
-function Result({ profile, onShareReport, onRestart, statusMessage }) {
+function Result({ profile, onShareReport, statusMessage }) {
   const revealClassName = useStaggerReveal(profile.en);
   const [isSharingReport, setIsSharingReport] = useState(false);
   const [shareImageUrl, setShareImageUrl] = useState("");
   const [shareFile, setShareFile] = useState(null);
   const [descriptionState, setDescriptionState] = useState({ profileId: profile.id, language: "en" });
+  const [isGrowthDrawerOpen, setIsGrowthDrawerOpen] = useState(false);
   const descriptionLanguage = descriptionState.profileId === profile.id ? descriptionState.language : "en";
   const isDescriptionChinese = descriptionLanguage === "cn";
 
@@ -838,10 +841,56 @@ function Result({ profile, onShareReport, onRestart, statusMessage }) {
             <button className="theme-action-button" onClick={handleShareReport} disabled={isSharingReport}>
               {isSharingReport ? "Preparing..." : "Share My Report"}
             </button>
-            <button className="outline-action restart-action" onClick={onRestart}>重新开始</button>
+            <button
+              className="outline-action restart-action"
+              onClick={() => setIsGrowthDrawerOpen(true)}
+            >
+              领取成长建议
+            </button>
           </div>
           {statusMessage ? <p className="result-status" key={statusMessage}>{statusMessage}</p> : null}
         </div>
+        {isGrowthDrawerOpen ? (
+          <div
+            className="growth-drawer-layer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="领取成长建议"
+          >
+            <button
+              className="growth-drawer-backdrop"
+              type="button"
+              aria-label="关闭成长建议"
+              onClick={() => setIsGrowthDrawerOpen(false)}
+            />
+            <div className={`growth-drawer theme-${profile.theme}`}>
+              <div className="growth-drawer-handle" />
+              <button
+                className="growth-drawer-close"
+                type="button"
+                aria-label="关闭"
+                onClick={() => setIsGrowthDrawerOpen(false)}
+              >
+                <X size={18} />
+              </button>
+              <div className="growth-drawer-copy">
+                <p>Growth Advice</p>
+                <h2>领取你的成长建议</h2>
+                <span>添加 WAPI 老师，获取适合你的表达成长路径。</span>
+              </div>
+              <div className="growth-qr-placeholder">
+                <img src="/growth-advice-qr.png" alt="WAPI 老师二维码" />
+              </div>
+              <button
+                className="theme-action-button"
+                type="button"
+              >
+                <CheckCircle size={17} />
+                长按或截图保存二维码
+              </button>
+            </div>
+          </div>
+        ) : null}
         {shareImageUrl ? (
           <div className="share-preview" role="dialog" aria-modal="true" aria-label="Share report image preview">
             <div className="share-preview-panel">
@@ -1071,18 +1120,6 @@ export function App() {
     setM2Answers(createEmptyAnswers(m2Questions.length));
   };
 
-  const restartAssessment = () => {
-    clearAdvanceTimer();
-    setIsTransitioning(false);
-    setStatusMessage("");
-    setFormData(defaultFormData);
-    setM1Step(0);
-    setM2Step(0);
-    setM1Answers(createEmptyAnswers(m1Questions.length));
-    setM2Answers(createEmptyAnswers(m2Questions.length));
-    setScreen("register");
-  };
-
   const goM1Prev = () => {
     clearAdvanceTimer();
     setIsTransitioning(false);
@@ -1235,7 +1272,6 @@ export function App() {
     <Result
       profile={resultProfile}
       onShareReport={handleShareReport}
-      onRestart={restartAssessment}
       statusMessage={statusMessage}
     />
   );
